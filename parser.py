@@ -26,21 +26,43 @@ tag_levels = {
     'NOTE': 0
 }
 
-people = {}
-families = {}
+people = []
+families = []
 
 with open(sys.argv[1]) as f:
     content = f.readlines()
+
+    current_type = None
+    current = None
     for line in content:
         print('-->{}'.format(line.strip()))
         analysis = ''
         if re.match(indi_fam_format, line):
+            # Handle saving the last object we were parsing
+            if current_type == 'INDI':
+                people.append(current)
+            else:
+                families.append(current)
+
+            # Parse and start handling the new object
             m = re.match(indi_fam_format, line)
-            analysis = '0|{}|Y|{}'.format(m.group(2), m.group(1))
+            tag = m.group(2)
+            identifier = m.group(1)
+
+            current_type = tag
+            current = {'id': identifier}
+
+            analysis = '0|{}|Y|{}'.format(tag, identifier)
+
         elif re.match(correct_format, line):
             m = re.match(correct_format, line)
+
             valid = 'Y' if (m.group(2) in allowed_tags) and (int(m.group(1)) == tag_levels[m.group(2)]) else 'N'
             analysis = '{}|{}|{}|{}'.format(m.group(1), m.group(2), valid, m.group(3))
         else:
             analysis += 'INPUT FORMAT INCORRECT'
         print('<--{}'.format(analysis))
+
+
+    print(people)
+    print(families)
