@@ -26,6 +26,9 @@ tag_levels = {
     'NOTE': 0
 }
 
+people = {}
+families = {}
+
 with open(sys.argv[1]) as f:
     content = f.readlines()
     for line in content:
@@ -36,7 +39,8 @@ with open(sys.argv[1]) as f:
             analysis = '0|{}|Y|{}'.format(m.group(2), m.group(1))
         elif re.match(correct_format, line):
             m = re.match(correct_format, line)
-            analysis = '{}|{}|{}|{}'.format(m.group(1), m.group(2), 'Y' if (m.group(2) in allowed_tags) and (int(m.group(1)) == tag_levels[m.group(2)]) else 'N', m.group(3))
+            valid = 'Y' if (m.group(2) in allowed_tags) and (int(m.group(1)) == tag_levels[m.group(2)]) else 'N'
+            analysis = '{}|{}|{}|{}'.format(m.group(1), m.group(2), valid, m.group(3))
         else:
             analysis += 'INPUT FORMAT INCORRECT'
         print('<--{}'.format(analysis))
