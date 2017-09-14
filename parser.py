@@ -2,7 +2,7 @@
 import sys
 import re
 
-correct_format = r'([012]) (\S{3,})(?:\s|$)(\S*)\n?'
+correct_format = r'([012]) (\S{3,})(?:\s|$)?(.*)$'
 indi_fam_format = r'0 (\S+) (INDI|FAM)'
 allowed_tags = set(['INDI', 'NAME', 'SEX', 'BIRT', 'DEAT', 'FAMC', 'FAMS', 'FAM', 'MARR', 'HUSB', 'WIFE', 'CHIL', 'DIV', 'DATE', 'HEAD', 'TR:R', 'NOTE'])
 
@@ -56,9 +56,19 @@ with open(sys.argv[1]) as f:
 
         elif re.match(correct_format, line):
             m = re.match(correct_format, line)
+            level = m.group(1)
+            tag = m.group(2)
+            args = m.group(3).strip()
 
             valid = 'Y' if (m.group(2) in allowed_tags) and (int(m.group(1)) == tag_levels[m.group(2)]) else 'N'
-            analysis = '{}|{}|{}|{}'.format(m.group(1), m.group(2), valid, m.group(3))
+            analysis = '{}|{}|{}|{}'.format(level, tag, valid, args)
+
+            if tag == 'NAME':
+                current['name'] = args
+            elif tag == 'SEX':
+                current['sex'] = args
+
+
         else:
             analysis += 'INPUT FORMAT INCORRECT'
         print('<--{}'.format(analysis))
