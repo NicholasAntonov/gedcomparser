@@ -39,10 +39,11 @@ with open(sys.argv[1]) as f:
         analysis = ''
         if re.match(indi_fam_format, line):
             # Handle saving the last object we were parsing
-            if current_type == 'INDI':
-                people.append(current)
-            else:
-                families.append(current)
+            if current != None:
+                if current_type == 'INDI':
+                    people.append(current)
+                else:
+                    families.append(current)
 
             # Parse and start handling the new object
             m = re.match(indi_fam_format, line)
@@ -50,7 +51,16 @@ with open(sys.argv[1]) as f:
             identifier = m.group(1)
 
             current_type = tag
-            current = {'id': identifier}
+            if current_type == 'INDI':
+                current = {
+                    'id': identifier,
+                    'dead': 'N'
+                }
+            else:
+                current = {
+                    'id': identifier,
+                    'children': []
+                }
 
             analysis = '0|{}|Y|{}'.format(tag, identifier)
 
@@ -63,10 +73,18 @@ with open(sys.argv[1]) as f:
             valid = 'Y' if (m.group(2) in allowed_tags) and (int(m.group(1)) == tag_levels[m.group(2)]) else 'N'
             analysis = '{}|{}|{}|{}'.format(level, tag, valid, args)
 
+            # Individuals
             if tag == 'NAME':
                 current['name'] = args
             elif tag == 'SEX':
                 current['sex'] = args
+            # Families
+            elif tag == 'HUSB':
+                current['husband'] = args
+            elif tag == 'WIFE':
+                current['wife'] = args
+            elif tag == 'CHIL':
+                current['children'].append(args)
 
 
         else:
