@@ -78,6 +78,9 @@ with open(sys.argv[1]) as f:
                 current['name'] = args
             elif tag == 'SEX':
                 current['sex'] = args
+            elif tag == 'DEAT':
+                current['dead'] = args
+                # TODO ADD RULES TO GET THIS DATE
             # Families
             elif tag == 'HUSB':
                 current['husband'] = args
