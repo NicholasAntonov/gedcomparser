@@ -34,6 +34,7 @@ with open(sys.argv[1]) as f:
 
     current_type = None
     current = None
+    prev = None
     for line in content:
         print('-->{}'.format(line.strip()))
         analysis = ''
@@ -80,7 +81,8 @@ with open(sys.argv[1]) as f:
                 current['sex'] = args
             elif tag == 'DEAT':
                 current['dead'] = args
-                # TODO ADD RULES TO GET THIS DATE
+            elif tag == 'DATE':
+                current[prev + '-date'] = args
             # Families
             elif tag == 'HUSB':
                 current['husband'] = args
@@ -93,6 +95,8 @@ with open(sys.argv[1]) as f:
         else:
             analysis += 'INPUT FORMAT INCORRECT'
         print('<--{}'.format(analysis))
+        # used when date is encountered
+        prev = tag.lower()
 
 
     print(people)
