@@ -1,6 +1,7 @@
 # Author: Nicholas Antonov
 import sys
 import re
+import datetime
 
 correct_format = r'([012]) (\S{3,})(?:\s|$)?(.*)$'
 indi_fam_format = r'0 (\S+) (INDI|FAM)'
@@ -82,7 +83,7 @@ with open(sys.argv[1]) as f:
             elif tag == 'DEAT':
                 current['dead'] = args
             elif tag == 'DATE':
-                current[prev + '-date'] = args
+                current[prev + '-date'] = datetime.datetime.strptime(args, '%d %b %Y')
             # Families
             elif tag == 'HUSB':
                 current['husband'] = args
