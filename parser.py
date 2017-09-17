@@ -7,6 +7,7 @@ import datetime
 correct_format = r'([012]) (\S{3,})(?:\s|$)?(.*)$'
 indi_fam_format = r'0 (\S+) (INDI|FAM)'
 allowed_tags = set(['INDI', 'NAME', 'SEX', 'BIRT', 'DEAT', 'FAMC', 'FAMS', 'FAM', 'MARR', 'HUSB', 'WIFE', 'CHIL', 'DIV', 'DATE', 'HEAD', 'TR:R', 'NOTE'])
+namedict = {}
 
 tag_levels = {
     'INDI': 0,
@@ -44,6 +45,7 @@ with open(sys.argv[1]) as f:
             # Handle saving the last object we were parsing
             if current != None:
                 if current_type == 'INDI':
+                    namedict[current['id']] = current['name']
                     people.append(current)
                 else:
                     families.append(current)
@@ -87,11 +89,11 @@ with open(sys.argv[1]) as f:
                 current[prev + '-date'] = datetime.datetime.strptime(args, '%d %b %Y').strftime('%m/%d/%Y')
             # Families
             elif tag == 'HUSB':
-                current['husband'] = args
+                current['husband'] = namedict[args]
             elif tag == 'WIFE':
-                current['wife'] = args
+                current['wife'] = namedict[args]
             elif tag == 'CHIL':
-                current['children'].append(args)
+                current['children'].append(namedict[args])
 
 
         else:
