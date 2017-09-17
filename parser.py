@@ -100,10 +100,10 @@ with open(sys.argv[1]) as f:
         # used when date is encountered
         prev = tag.lower()
 
-with open('people.txt', 'w') as outfile:
+with open('people.json', 'w') as outfile:
     json.dump(people, outfile)
 
-with open('families.txt', 'w') as outfile:
+with open('families.json', 'w') as outfile:
     json.dump(families, outfile)
 
     print(people)
