@@ -1,11 +1,8 @@
 # Author: Nicholas Antonov
 import sys
 import re
-<<<<<<< HEAD
 import csv
-=======
 import datetime
->>>>>>> 08b5cc6849d453f55bd9cc7b9b50aa9bb48a2c71
 
 correct_format = r'([012]) (\S{3,})(?:\s|$)?(.*)$'
 indi_fam_format = r'0 (\S+) (INDI|FAM)'
@@ -100,19 +97,23 @@ with open(sys.argv[1]) as f:
         else:
             analysis += 'INPUT FORMAT INCORRECT'
         print('<--{}'.format(analysis))
-<<<<<<< HEAD
+        # used when date is encountered
+        prev = tag.lower()
 
 with open('people.csv', 'w') as csvfile:
     fieldnames = ['ID', 'NAME', 'GENDER', 'BIRTHDAY', 'AGE', 'ALIVE', 'DEATH', 'CHILD', 'SPOUSE']
-    writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+    writer = csv.writer(csvfile, lineterminator='\n')
+    writer.writerow(fieldnames)
+    for x in people:
+        writer.writerow([x])
 
-    writer.writeheader()
-    
-=======
-        # used when date is encountered
-        prev = tag.lower()
+with open('families.csv', 'w') as csvfile:
+    fieldnames = ['ID', 'MARRIED', 'DIVORCED', 'HUSBAND ID', 'HUSBAND NAME', 'WIFE ID', 'WIFE NAME', 'CHILDREN']
+    writer = csv.writer(csvfile, lineterminator='\n')
+    writer.writerow(fieldnames)
+    for x in families:
+        writer.writerow([x])
 
 
     print(people)
     print(families)
->>>>>>> 08b5cc6849d453f55bd9cc7b9b50aa9bb48a2c71
