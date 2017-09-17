@@ -1,6 +1,7 @@
 # Author: Nicholas Antonov
 import sys
 import re
+import json
 import datetime
 
 correct_format = r'([012]) (\S{3,})(?:\s|$)?(.*)$'
@@ -83,7 +84,7 @@ with open(sys.argv[1]) as f:
             elif tag == 'DEAT':
                 current['dead'] = args
             elif tag == 'DATE':
-                current[prev + '-date'] = datetime.datetime.strptime(args, '%d %b %Y')
+                current[prev + '-date'] = datetime.datetime.strptime(args, '%d %b %Y').strftime('%m/%d/%Y')
             # Families
             elif tag == 'HUSB':
                 current['husband'] = args
@@ -99,6 +100,11 @@ with open(sys.argv[1]) as f:
         # used when date is encountered
         prev = tag.lower()
 
+with open('people.txt', 'w') as outfile:
+    json.dump(people, outfile)
+
+with open('families.txt', 'w') as outfile:
+    json.dump(families, outfile)
 
     print(people)
     print(families)
