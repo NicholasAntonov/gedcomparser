@@ -8,7 +8,8 @@ correct_format = r'([012]) (\S{3,})(?:\s|$)?(.*)$'
 indi_fam_format = r'0 (\S+) (INDI|FAM)'
 allowed_tags = set(['INDI', 'NAME', 'SEX', 'BIRT', 'DEAT', 'FAMC', 'FAMS', 'FAM', 'MARR', 'HUSB', 'WIFE', 'CHIL', 'DIV', 'DATE', 'HEAD', 'TR:R', 'NOTE'])
 namedict = {}
-
+spousedict = {}
+childdict = {}
 tag_levels = {
     'INDI': 0,
     'NAME': 1,
@@ -90,18 +91,40 @@ with open(sys.argv[1]) as f:
             # Families
             elif tag == 'HUSB':
                 current['husband'] = namedict[args]
+                spousedict[namedict[args]] = args
             elif tag == 'WIFE':
                 current['wife'] = namedict[args]
+                spousedict[namedict[args]] = args
             elif tag == 'CHIL':
                 current['children'].append(namedict[args])
-
-
+                husband = current.get('husband')
+                wife = current.get('wife')
+                if husband != None:
+                    husbchildren = childdict.get(husband)
+                    if husbchildren == None:
+                        childdict[husband] = [args]
+                    else:
+                        childdict[husband].append(args)   
+                if wife != None:
+                    wifechildren = childdict.get(wife)
+                    if wifechildren == None:
+                        childdict[wife] = [args]
+                    else:
+                        childdict[wife].append(args)
+                        
         else:
             analysis += 'INPUT FORMAT INCORRECT'
         print('<--{}'.format(analysis))
         # used when date is encountered
         prev = tag.lower()
 
+for i in people:
+    name = i['name']
+    spouse = spousedict.get(name)
+    children = childdict.get(name)
+    i['spouse'] = spouse
+    i['children'] = children
+    
 with open('people.json', 'w') as outfile:
     json.dump(people, outfile)
 
