@@ -124,6 +124,10 @@ for i in people:
     children = childdict.get(name)
     i['spouse'] = spouse
     i['children'] = children
+    date = i.get('birt-date')
+    if date != None:
+        year = int((date.split('/'))[2])
+        i['age'] = 2017 - year
     
 with open('people.json', 'w') as outfile:
     json.dump(people, outfile)
