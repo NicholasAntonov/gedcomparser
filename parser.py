@@ -3,6 +3,8 @@ import sys
 import re
 import json
 import datetime
+import time
+
 
 correct_format = r'([012]) (\S{3,})(?:\s|$)?(.*)$'
 indi_fam_format = r'0 (\S+) (INDI|FAM)'
@@ -88,6 +90,7 @@ with open(sys.argv[1]) as f:
                 current['dead'] = args
             elif tag == 'DATE':
                 current[prev + '-date'] = datetime.datetime.strptime(args, '%d %b %Y').strftime('%m/%d/%Y')
+                current['age'] = ((datetime.datetime.now() - datetime.datetime.strptime(args, '%d %b %Y')).days)/365
             # Families
             elif tag == 'HUSB':
                 current['husband'] = namedict[args]
@@ -124,10 +127,7 @@ for i in people:
     children = childdict.get(name)
     i['spouse'] = spouse
     i['children'] = children
-    date = i.get('birt-date')
-    if date != None:
-        year = int((date.split('/'))[2])
-        i['age'] = 2017 - year
+
     
 with open('people.json', 'w') as outfile:
     json.dump(people, outfile)
