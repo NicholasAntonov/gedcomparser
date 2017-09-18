@@ -125,7 +125,8 @@ for i in people:
     name = i['name']
     spouse = spousedict.get(name)
     children = childdict.get(name)
-    i['spouse'] = spouse
+    i['spouse'] = namedict.get(spouse)
+    i['spouseID'] = spouse
     i['children'] = children
 
     
