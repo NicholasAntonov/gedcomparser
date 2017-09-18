@@ -128,12 +128,12 @@ for i in people:
     if date != None:
         year = int((date.split('/'))[2])
         i['age'] = 2017 - year
-    
+
 with open('people.json', 'w') as outfile:
     json.dump(people, outfile)
 
 with open('families.json', 'w') as outfile:
     json.dump(families, outfile)
 
-    print(people)
-    print(families)
+    print(json.dumps(people, indent=4))
+    print(json.dumps(families, indent=4))
