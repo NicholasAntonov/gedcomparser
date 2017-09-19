@@ -5,6 +5,7 @@ import json
 import datetime
 import time
 from copy import deepcopy
+from prettytable import PrettyTable
 
 def format_for_output(item):
     out = deepcopy(item)
@@ -157,3 +158,8 @@ if __name__ == "__main__":
 
     with open('families.json', 'w') as outfile:
         outfile.write(output_list(families))
+
+    pt = PrettyTable()
+    peopleHeaders = ['ID', 'NAME', 'GENDER', 'BIRTHDAY', 'AGE', 'ALIVE', 'DEATH', 'CHILD', 'SPOUSE']
+    pt.add_column(peopleHeaders[0], people[0])
+    print(pt)
