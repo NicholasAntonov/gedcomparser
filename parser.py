@@ -4,6 +4,7 @@ import re
 import json
 import datetime
 import time
+from copy import deepcopy
 
 
 correct_format = r'([012]) (\S{3,})(?:\s|$)?(.*)$'
@@ -89,7 +90,7 @@ with open(sys.argv[1]) as f:
             elif tag == 'DEAT':
                 current['dead'] = args
             elif tag == 'DATE':
-                current[prev + '-date'] = datetime.datetime.strptime(args, '%d %b %Y').strftime('%m/%d/%Y')
+                current[prev + '-date'] = datetime.datetime.strptime(args, '%d %b %Y')
                 current['age'] = ((datetime.datetime.now() - datetime.datetime.strptime(args, '%d %b %Y')).days)/365
             # Families
             elif tag == 'HUSB':
@@ -121,6 +122,7 @@ with open(sys.argv[1]) as f:
         # used when date is encountered
         prev = tag.lower()
 
+now = datetime.datetime.now()
 for i in people:
     name = i['name']
     spouse = spousedict.get(name)
@@ -130,14 +132,25 @@ for i in people:
     i['children'] = children
     date = i.get('birt-date')
     if date != None:
-        year = int((date.split('/'))[2])
-        i['age'] = 2017 - year
+        delta = now - date
+        i['age'] = delta.days / 365.25
+
+def format_for_output(item):
+    out = deepcopy(item)
+    for key in item:
+        if type(item[key]) == datetime.datetime:
+            out[key] = item[key].strftime('%Y-%m-%d')
+    return out
+
+def output_list(ls):
+    return json.dumps(list(map(format_for_output, ls)), indent=4)
+
+
+print(output_list(people))
+print(output_list(families))
 
 with open('people.json', 'w') as outfile:
-    json.dump(people, outfile)
+    outfile.write(output_list(people))
 
 with open('families.json', 'w') as outfile:
-    json.dump(families, outfile)
-
-    print(json.dumps(people, indent=4))
-    print(json.dumps(families, indent=4))
+    outfile.write(output_list(families))
