@@ -91,7 +91,6 @@ with open(sys.argv[1]) as f:
                 current['dead'] = args
             elif tag == 'DATE':
                 current[prev + '-date'] = datetime.datetime.strptime(args, '%d %b %Y')
-                current['age'] = ((datetime.datetime.now() - datetime.datetime.strptime(args, '%d %b %Y')).days)/365
             # Families
             elif tag == 'HUSB':
                 current['husband'] = namedict[args]
