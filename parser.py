@@ -11,8 +11,7 @@ correct_format = r'([012]) (\S{3,})(?:\s|$)?(.*)$'
 indi_fam_format = r'0 (\S+) (INDI|FAM)'
 allowed_tags = set(['INDI', 'NAME', 'SEX', 'BIRT', 'DEAT', 'FAMC', 'FAMS', 'FAM', 'MARR', 'HUSB', 'WIFE', 'CHIL', 'DIV', 'DATE', 'HEAD', 'TR:R', 'NOTE'])
 namedict = {}
-spousedict = {}
-childdict = {}
+famdict = {}
 tag_levels = {
     'INDI': 0,
     'NAME': 1,
@@ -49,9 +48,20 @@ with open(sys.argv[1]) as f:
             # Handle saving the last object we were parsing
             if current != None:
                 if current_type == 'INDI':
-                    namedict[current['id']] = current['name']
+                    now = datetime.datetime.now()
+                    #spouse = spousedict.get(name)
+                    #children = childdict.get(name)
+                    #i['spouse'] = namedict.get(spouse)
+                    #i['spouseID'] = spouse
+                    #i['children'] = children
+                    date = current.get('birt-date')
+                    if date != None:
+                        delta = now - date
+                        current['age'] = delta.days / 365.25
+                    namedict[current['id']] = current
                     people.append(current)
                 else:
+                    famdict[current['id']] = current
                     families.append(current)
 
             # Parse and start handling the new object
@@ -93,27 +103,27 @@ with open(sys.argv[1]) as f:
                 current[prev + '-date'] = datetime.datetime.strptime(args, '%d %b %Y')
             # Families
             elif tag == 'HUSB':
-                current['husband'] = namedict[args]
-                spousedict[namedict[args]] = args
+                current['husband'] = args
+                current['husbandname'] = namedict[args].get('name')
             elif tag == 'WIFE':
-                current['wife'] = namedict[args]
-                spousedict[namedict[args]] = args
+                current['wife'] = args
+                current['wifename'] = namedict[args].get('name')
             elif tag == 'CHIL':
-                current['children'].append(namedict[args])
+                current['children'].append(namedict[args].get('name'))
                 husband = current.get('husband')
                 wife = current.get('wife')
                 if husband != None:
-                    husbchildren = childdict.get(husband)
+                    husbchildren = namedict.get(husband).get('children')
                     if husbchildren == None:
-                        childdict[husband] = [args]
+                        namedict[husband]['children'] = [args]
                     else:
-                        childdict[husband].append(args)   
+                        namedict[husband]['children'].append(args)   
                 if wife != None:
-                    wifechildren = childdict.get(wife)
+                    wifechildren = namedict.get(wife).get('children')
                     if wifechildren == None:
-                        childdict[wife] = [args]
+                        namedict[wife]['children'] = [args]
                     else:
-                        childdict[wife].append(args)
+                        namedict[wife]['children'].append(args)
                         
         else:
             analysis += 'INPUT FORMAT INCORRECT'
@@ -121,18 +131,6 @@ with open(sys.argv[1]) as f:
         # used when date is encountered
         prev = tag.lower()
 
-now = datetime.datetime.now()
-for i in people:
-    name = i['name']
-    spouse = spousedict.get(name)
-    children = childdict.get(name)
-    i['spouse'] = namedict.get(spouse)
-    i['spouseID'] = spouse
-    i['children'] = children
-    date = i.get('birt-date')
-    if date != None:
-        delta = now - date
-        i['age'] = delta.days / 365.25
 
 def format_for_output(item):
     out = deepcopy(item)
