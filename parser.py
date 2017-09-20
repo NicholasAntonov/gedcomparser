@@ -111,6 +111,10 @@ def parse(filename):
                     current['wife'] = namedict[args]
                     spousedict[namedict[args]] = args
                     current['wifeID'] = args
+                elif tag == 'MARR':
+                    current['marr'] = args
+                elif tag == 'DIV':
+                    current['div'] = args
                 elif tag == 'CHIL':
                     current['children'].append(namedict[args])
                     husband = current.get('husband')
@@ -173,7 +177,7 @@ if __name__ == "__main__":
     ptfam = PrettyTable()
     ptfam.field_names = ['ID', 'MARRIED', 'DIVORCED', 'HUSBAND ID', 'HUSBAND NAME', 'WIFE ID', 'WIFE NAME', 'CHILDREN']
     for fam in families:
-        ptfam.add_row([fam['id'], fam.get('marr'), fam.get('div'), fam.get('husbandID'), fam.get('husband'), fam.get('wifeID'), fam.get('wife'), fam.get('children')])
+        ptfam.add_row([fam['id'], fam.get('marr-date'), fam.get('div-date'), fam.get('husbandID'), fam.get('husband'), fam.get('wifeID'), fam.get('wife'), fam.get('children')])
     print(ptfam)
 
     with open('families.txt', 'w') as outfile:
