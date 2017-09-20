@@ -6,6 +6,7 @@ import datetime
 import time
 from copy import deepcopy
 from prettytable import PrettyTable
+from error import Error
 
 def format_for_output(item):
     out = deepcopy(item)
@@ -50,7 +51,9 @@ def parse(filename):
 
     people = []
     families = []
+    errors = []
 
+    now = datetime.datetime.now()
     with open(filename) as f:
         content = f.readlines()
 
@@ -106,6 +109,8 @@ def parse(filename):
                     current['dead'] = args
                 elif tag == 'DATE':
                     current[prev + '-date'] = datetime.datetime.strptime(args, '%d %b %Y')
+                    if current[prev + '-date'] >= now:
+                        errors.append(Error('Date after current date', 1, [current['id']]))
                 # Families
                 elif tag == 'HUSB':
                     current['husband'] = args
@@ -130,7 +135,6 @@ def parse(filename):
             print('<--{}'.format(analysis))
 
     # Final pass through data to do calculations that can only be done after parse
-    now = datetime.datetime.now()
     for person in people:
         date = person.get('birt-date')
         deathdate = person.get('deat-date')
@@ -148,10 +152,10 @@ def parse(filename):
             if wife:
                 wife['spouse'] = family.get('husband')
 
-    return (people, families)
+    return (people, families, errors)
 
 if __name__ == "__main__":
-    people, families = parse(sys.argv[1])
+    people, families, errors = parse(sys.argv[1])
 
     print(output_list(people))
     print(output_list(families))
@@ -186,3 +190,5 @@ if __name__ == "__main__":
         outfile.write(str(pt))
         outfile.write('\n\n\n\n\n')
         outfile.write(str(ptfam))
+
+    print(json.dumps([error.__dict__ for error in errors], indent=4))
