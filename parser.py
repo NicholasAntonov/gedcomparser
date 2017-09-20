@@ -8,6 +8,8 @@ from copy import deepcopy
 from prettytable import PrettyTable
 from error import Error
 
+debug = False
+
 def format_for_output(item):
     out = deepcopy(item)
     for key in item:
@@ -61,7 +63,8 @@ def parse(filename):
         current = None
         prev = None
         for line in content:
-            print('-->{}'.format(line.strip()))
+            if debug:
+                print('-->{}'.format(line.strip()))
             analysis = ''
             if re.match(indi_fam_format, line):
                 # Handle saving the last object we were parsing
@@ -132,7 +135,8 @@ def parse(filename):
                 prev = tag.lower()
             else:
                 analysis += 'INPUT FORMAT INCORRECT'
-            print('<--{}'.format(analysis))
+            if debug:
+                print('<--{}'.format(analysis))
 
     # Final pass through data to do calculations that can only be done after parse
     for person in people:
