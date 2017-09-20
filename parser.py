@@ -17,13 +17,17 @@ def format_for_output(item):
 def output_list(ls):
     return json.dumps(list(map(format_for_output, ls)), indent=4)
 
+# This will end up making the parser O(n^2) but since we are bounded to a small input size its fine
+def get_by_id(ls, identifier):
+    for item in ls:
+        if item.get('id') == identifier:
+            return item
+    return None
+
 def parse(filename):
     correct_format = r'([012]) (\S{3,})(?:\s|$)?(.*)$'
     indi_fam_format = r'0 (\S+) (INDI|FAM)'
     allowed_tags = set(['INDI', 'NAME', 'SEX', 'BIRT', 'DEAT', 'FAMC', 'FAMS', 'FAM', 'MARR', 'HUSB', 'WIFE', 'CHIL', 'DIV', 'DATE', 'HEAD', 'TR:R', 'NOTE'])
-    namedict = {}
-    spousedict = {}
-    childdict = {}
     tag_levels = {
         'INDI': 0,
         'NAME': 1,
@@ -60,7 +64,6 @@ def parse(filename):
                 # Handle saving the last object we were parsing
                 if current != None:
                     if current_type == 'INDI':
-                        namedict[current['id']] = current['name']
                         people.append(current)
                     else:
                         families.append(current)
@@ -74,7 +77,8 @@ def parse(filename):
                 if current_type == 'INDI':
                     current = {
                         'id': identifier,
-                        'dead': 'N'
+                        'dead': 'N',
+                        'children': []
                     }
                 else:
                     current = {
@@ -104,55 +108,45 @@ def parse(filename):
                     current[prev + '-date'] = datetime.datetime.strptime(args, '%d %b %Y')
                 # Families
                 elif tag == 'HUSB':
-                    current['husband'] = namedict[args]
-                    spousedict[namedict[args]] = args
-                    current['husbandID'] = args
+                    current['husband'] = args
                 elif tag == 'WIFE':
-                    current['wife'] = namedict[args]
-                    spousedict[namedict[args]] = args
-                    current['wifeID'] = args
+                    current['wife'] = args
                 elif tag == 'MARR':
                     current['marr'] = args
-                elif tag == 'DIV':
-                    current['div'] = args
                 elif tag == 'CHIL':
-                    current['children'].append(namedict[args])
-                    husband = current.get('husband')
-                    wife = current.get('wife')
+                    child = args
+                    current['children'].append(child)
+                    husband = get_by_id(people, current.get('husband'))
+                    wife = get_by_id(people, current.get('wife'))
                     if husband != None:
-                        husbchildren = childdict.get(husband)
-                        if husbchildren == None:
-                            childdict[husband] = [args]
-                        else:
-                            childdict[husband].append(args)
+                        husband['children'].append(child)
                     if wife != None:
-                        wifechildren = childdict.get(wife)
-                        if wifechildren == None:
-                            childdict[wife] = [args]
-                        else:
-                            childdict[wife].append(args)
+                        wife['children'].append(child)
 
+                # used when date is encountered
                 prev = tag.lower()
             else:
                 analysis += 'INPUT FORMAT INCORRECT'
             print('<--{}'.format(analysis))
-            # used when date is encountered
 
+    # Final pass through data to do calculations that can only be done after parse
     now = datetime.datetime.now()
-    for i in people:
-        name = i['name']
-        spouse = spousedict.get(name)
-        children = childdict.get(name)
-        i['spouse'] = namedict.get(spouse)
-        i['spouseID'] = spouse
-        i['children'] = children
-        date = i.get('birt-date')
-        deathdate = i.get('deat-date')
-        if deathdate != None:
-            now = deathdate
+    for person in people:
+        date = person.get('birt-date')
+        deathdate = person.get('deat-date')
+        age_end = deathdate if deathdate != None else now
         if date != None:
-            delta = now - date
-            i['age'] = delta.days / 365.25 
+            delta = age_end - date
+            person['age'] = delta.days / 365.25
+
+    for family in families:
+        if family.get('div-date') == None:
+            husband = get_by_id(people, family.get('husband'))
+            wife = get_by_id(people, family.get('wife'))
+            if husband:
+                husband['spouse'] = family.get('wife')
+            if wife:
+                wife['spouse'] = family.get('husband')
 
     return (people, families)
 
@@ -171,7 +165,7 @@ if __name__ == "__main__":
     pt = PrettyTable()
     pt.field_names = ['ID', 'NAME', 'GENDER', 'BIRTHDAY', 'AGE', 'DEAD', 'DEATH', 'CHILD', 'SPOUSE']
     for person in people:
-        pt.add_row([person['id'], person['name'], person['sex'], person.get('birt-date'), person.get('age'), person.get('dead'),person.get('deat-date'),person.get('children'),person.get('spouseID')])
+        pt.add_row([person['id'], person['name'], person['sex'], person.get('birt-date'), person.get('age'), person.get('dead'),person.get('deat-date'),person.get('children'),person.get('spouse')])
     print(pt)
 
     with open('people.txt', 'w') as outfile:
@@ -180,7 +174,9 @@ if __name__ == "__main__":
     ptfam = PrettyTable()
     ptfam.field_names = ['ID', 'MARRIED', 'DIVORCED', 'HUSBAND ID', 'HUSBAND NAME', 'WIFE ID', 'WIFE NAME', 'CHILDREN']
     for fam in families:
-        ptfam.add_row([fam['id'], fam.get('marr-date'), fam.get('div-date'), fam.get('husbandID'), fam.get('husband'), fam.get('wifeID'), fam.get('wife'), fam.get('children')])
+        husband = get_by_id(people, fam.get('husband'))
+        wife = get_by_id(people, fam.get('wife'))
+        ptfam.add_row([fam['id'], fam.get('marr-date'), fam.get('div-date'), fam.get('husband'), None if husband == None else husband.get('name'), fam.get('wife'), None if wife == None else wife.get('name'), fam.get('children')])
     print(ptfam)
 
     with open('families.txt', 'w') as outfile:
