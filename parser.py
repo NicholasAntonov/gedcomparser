@@ -84,7 +84,7 @@ def parse(filename):
 
                 analysis = '0|{}|Y|{}'.format(tag, identifier)
 
-            elif re.match(correct_format, line):
+            elif (current != None) and re.match(correct_format, line):
                 m = re.match(correct_format, line)
                 level = m.group(1)
                 tag = m.group(2)
@@ -126,11 +126,11 @@ def parse(filename):
                         else:
                             childdict[wife].append(args)
 
+                prev = tag.lower()
             else:
                 analysis += 'INPUT FORMAT INCORRECT'
             print('<--{}'.format(analysis))
             # used when date is encountered
-            prev = tag.lower()
 
     now = datetime.datetime.now()
     for i in people:
@@ -160,6 +160,7 @@ if __name__ == "__main__":
         outfile.write(output_list(families))
 
     pt = PrettyTable()
-    peopleHeaders = ['ID', 'NAME', 'GENDER', 'BIRTHDAY', 'AGE', 'ALIVE', 'DEATH', 'CHILD', 'SPOUSE']
-    pt.add_column(peopleHeaders[0], people[0])
+    pt.field_names = ['ID', 'NAME', 'GENDER', 'BIRTHDAY', 'AGE', 'DEATH']
+    for person in people:
+        pt.add_row([person['id'], person['name'], person['sex'], person.get('birt-date'), person.get('age'), person.get('deat-date')])
     print(pt)

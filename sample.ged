@@ -1,12 +1,4 @@
-0 NOTE dates after now
-0 NOTE Nicholas Antonov
-1 SOUR Family Echo
-2 WWW http://www.familyecho.com
-0 bi00 INDI
-1 NAME Jimmy /Conners/
-2 NAME Nick
 1 FILE My Family
-1 DATE 3 SEP 2017
 1 DEST ANSTFILE
 1 GEDC
 2 VERS 5.5.1
