@@ -147,9 +147,12 @@ def parse(filename):
         i['spouseID'] = spouse
         i['children'] = children
         date = i.get('birt-date')
+        deathdate = i.get('deat-date')
+        if deathdate != None:
+            now = deathdate
         if date != None:
             delta = now - date
-            i['age'] = delta.days / 365.25
+            i['age'] = delta.days / 365.25 
 
     return (people, families)
 
