@@ -168,7 +168,16 @@ if __name__ == "__main__":
     with open('people.txt', 'w') as outfile:
         outfile.write(str(pt))
 
-    #ptfam = PrettyTable()
-    #ptfam.field_names['ID', 'MARRIED', 'DIVORCED', 'HUSBAND ID', 'HUSBAND NAME', 'WIFE ID', 'WIFE NAME', 'CHILDREN']
-    #for person in families:
-    #    ptfam.add_row([person['id'], person['']])
+    ptfam = PrettyTable()
+    ptfam.field_names = ['ID', 'MARRIED', 'DIVORCED', 'HUSBAND ID', 'HUSBAND NAME', 'WIFE ID', 'WIFE NAME', 'CHILDREN']
+    for fam in families:
+        ptfam.add_row([fam['id'], fam.get('marr'), fam.get('div'), fam.get('husbandID'), fam.get('husband'), fam.get('wifeID'), fam.get('wife'), fam.get('children')])
+    print(ptfam)
+
+    with open('families.txt', 'w') as outfile:
+        outfile.write(str(ptfam))
+
+    with open('bothtables.txt', 'w') as outfile:
+        outfile.write(str(pt))
+        outfile.write('\n\n\n\n\n')
+        outfile.write(str(ptfam))
