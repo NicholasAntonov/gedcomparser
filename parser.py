@@ -106,9 +106,11 @@ def parse(filename):
                 elif tag == 'HUSB':
                     current['husband'] = namedict[args]
                     spousedict[namedict[args]] = args
+                    current['husbandID'] = args
                 elif tag == 'WIFE':
                     current['wife'] = namedict[args]
                     spousedict[namedict[args]] = args
+                    current['wifeID'] = args
                 elif tag == 'CHIL':
                     current['children'].append(namedict[args])
                     husband = current.get('husband')
