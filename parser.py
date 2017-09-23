@@ -1,9 +1,9 @@
-# Author: Nicholas Antonov
 import sys
 import re
 import json
 import datetime
 import time
+import math
 from copy import deepcopy
 from prettytable import PrettyTable
 from error import Error
@@ -148,6 +148,21 @@ def parse(filename):
             person['age'] = delta.days / 365.25
 
     for family in families:
+        #Make sure that the children aren't born within 8 months of each other if they aren't twins
+        for child in family.get('children'):
+            childobject = get_by_id(people, child)
+            childbirth = childobject.get('birt-date')
+
+            for otherchild in family.get('children'):
+                if (otherchild == child):
+                    continue
+                else:
+                    otherchildobject = get_by_id(people, otherchild)
+                    otherchildbirth = otherchildobject.get('birt-date')
+                    if (math.fabs((childbirth-otherchildbirth).days < 240) and math.fabs((childbirth-otherchildbirth).days > 2)):
+                        errors.append(Error('Child not a twin and born within 8 months of another child', 1, [child]))                        
+
+
         if family.get('div-date') == None:
             husband = get_by_id(people, family.get('husband'))
             wife = get_by_id(people, family.get('wife'))
