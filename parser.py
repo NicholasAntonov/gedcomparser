@@ -138,6 +138,13 @@ def parse(filename):
             if debug:
                 print('<--{}'.format(analysis))
 
+        if current != None:
+            if current_type == 'INDI':
+                people.append(current)
+            else:
+                families.append(current)
+
+
     # Final pass through data to do calculations that can only be done after parse
     for person in people:
         date = person.get('birt-date')
@@ -146,6 +153,10 @@ def parse(filename):
         if date != None:
             delta = age_end - date
             person['age'] = delta.days / 365.25
+
+        if date and deathdate:
+            if deathdate < date:
+                errors.append(Error('Death date before birth date', 0, [person]))
 
     for family in families:
         #Make sure that the children aren't born within 8 months of each other if they aren't twins
@@ -210,4 +221,4 @@ if __name__ == "__main__":
         outfile.write('\n\n\n\n\n')
         outfile.write(str(ptfam))
 
-    print(json.dumps([error.__dict__ for error in errors], indent=4))
+    print(json.dumps([(error.title) for error in errors], indent=4))
