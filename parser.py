@@ -160,7 +160,7 @@ def parse(filename):
                     otherchildobject = get_by_id(people, otherchild)
                     otherchildbirth = otherchildobject.get('birt-date')
                     if (math.fabs((childbirth-otherchildbirth).days < 240) and math.fabs((childbirth-otherchildbirth).days > 2)):
-                        errors.append(Error('Child not a twin and born within 8 months of another child', 1, [child]))                        
+                        errors.append(Error('Child not a twin and born within 8 months of another child', 1, [child]))
 
 
         if family.get('div-date') == None:
