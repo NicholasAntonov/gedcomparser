@@ -190,9 +190,22 @@ if __name__ == "__main__":
     with open('families.txt', 'w') as outfile:
         outfile.write(str(ptfam))
 
-    with open('bothtables.txt', 'w') as outfile:
+    print(json.dumps([error.__dict__ for error in errors], indent=4))
+
+    with open('errors.json', 'w') as outfile:
+        outfile.write(json.dumps([error.__dict__ for error in errors], indent=4))
+
+    pterr = PrettyTable()
+    pterr.field_names = ['TITLE', 'SEVERITY', 'OFFENDERS']
+    for err in errors:
+        pterr.add_row(err[0], err[1], err[2])     
+
+    with open('errors.txt', 'w') as outfile:
+        outfile.write(str(pterr))
+
+    with open('alltables.txt', 'w') as outfile:
         outfile.write(str(pt))
         outfile.write('\n\n\n\n\n')
         outfile.write(str(ptfam))
-
-    print(json.dumps([error.__dict__ for error in errors], indent=4))
+        outfile.write('\n\n\n\n\n')
+        outfile.write(str(pterr))

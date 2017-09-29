@@ -4,3 +4,6 @@ class Error:
         self.severity = severity
         self.offenders = offenders
 
+    def __getError__(self, index):
+    	return self.Error.errorId[index]
+

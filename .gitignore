@@ -2,5 +2,6 @@ families.json
 people.json
 people.txt
 families.txt
-bothtables.txt
+errors.txt
+alltables.txt
 __pycache__
