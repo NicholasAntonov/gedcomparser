@@ -160,10 +160,16 @@ def parse(filename):
 
     for family in families:
         #Make sure that the children aren't born within 8 months of each other if they aren't twins
+        marrdate = family.get('marr-date')
+
         for child in family.get('children'):
             childobject = get_by_id(people, child)
             childbirth = childobject.get('birt-date')
 
+            if marrdate != None:
+                if ((childbirth - marrdate).days) < 0:
+                    errors.append(Error('Anomaly US08: Birth before marriage of parents', 2, [child]))
+                    
             for otherchild in family.get('children'):
                 if (otherchild == child):
                     continue
