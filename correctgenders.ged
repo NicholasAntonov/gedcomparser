@@ -1,0 +1,21 @@
+1 FAMS @F1@
+0 @I1@ INDI
+1 NAME TenTen /Hyuuga/
+2 GIVN TenTen
+2 SURN Hyuuga
+2 _MARNM Turmura
+1 SEX F
+1 BIRT
+2 DATE 9 MAR 1992
+0 @I2@ INDI
+1 NAME Neji /Hyuuga/
+2 GIVN Neji
+2 SURN Hyuuga
+2 _MARNM Hyuuga
+1 SEX M
+1 BIRT
+2 DATE 3 JULY 1992
+1 HUSB @I2@ 
+1 WIFE @I1@
+1 MARR
+2 DATE 14 FEB 2015

@@ -116,8 +116,14 @@ def parse(filename):
                         errors.append(Error('Date after current date', 1, [current['id']]))
                 # Families
                 elif tag == 'HUSB':
+                    husband = get_by_id(people, args)
+                    if husband.get('sex') != 'M':
+                        errors.append(Error('Error US21: Incorrect gender for role', 1, current['id']))
                     current['husband'] = args
                 elif tag == 'WIFE':
+                    wife = get_by_id(people, args)
+                    if wife.get('sex') != 'F':
+                        errors.append(Error('Error US21: Incorrect gender for role', 1, current['id'])) 
                     current['wife'] = args
                 elif tag == 'MARR':
                     current['marr'] = args
@@ -160,11 +166,13 @@ def parse(filename):
 
     for family in families:
         #Make sure that the children aren't born within 8 months of each other if they aren't twins
+        #Also make sure siblings aren't married to each other
         marrdate = family.get('marr-date')
 
         for child in family.get('children'):
             childobject = get_by_id(people, child)
             childbirth = childobject.get('birt-date')
+            childspouse = childobject.get('spouse')
 
             if marrdate != None:
                 if ((childbirth - marrdate).days) < 0:
@@ -177,9 +185,11 @@ def parse(filename):
                     otherchildobject = get_by_id(people, otherchild)
                     otherchildbirth = otherchildobject.get('birt-date')
                     if (math.fabs((childbirth-otherchildbirth).days < 240) and math.fabs((childbirth-otherchildbirth).days > 2)):
-                        errors.append(Error('Child not a twin and born within 8 months of another child', 1, [child]))
-
-
+                        errors.append(Error('Error US03: Child not a twin and born within 8 months of another child', 1, [child]))
+                if (otherchild == childspouse):
+                    errors.append(Error('Error US18: Siblings should not marry', 1, [child, childspouse]))
+        
+        
         if family.get('div-date') == None:
             husband = get_by_id(people, family.get('husband'))
             wife = get_by_id(people, family.get('wife'))

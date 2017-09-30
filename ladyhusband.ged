@@ -1,0 +1,21 @@
+1 FAMS @F1@
+0 @I1@ INDI
+1 NAME Sakura /Haruno/
+2 GIVN Sakura
+2 SURN Haruno
+2 _MARNM Haruna
+1 SEX F
+1 BIRT
+2 DATE 28 MAR 1993
+0 @I2@ INDI
+1 NAME Ino /Yamanaka/
+2 GIVN Ino
+2 SURN Yamanaka
+2 _MARNM Yamanaka
+1 SEX F
+1 BIRT
+2 DATE 23 SEPT 1993
+1 HUSB @I2@ 
+1 WIFE @I1@
+1 MARR
+2 DATE 14 FEB 2015
