@@ -54,6 +54,7 @@ def parse(filename):
     people = []
     families = []
     errors = []
+    allnames = []
 
     now = datetime.datetime.now()
     with open(filename) as f:
@@ -106,6 +107,7 @@ def parse(filename):
                 # Individuals
                 if tag == 'NAME':
                     current['name'] = args
+                    allnames.append(args)
                 elif tag == 'SEX':
                     current['sex'] = args
                 elif tag == 'DEAT':
@@ -157,6 +159,13 @@ def parse(filename):
         if date and deathdate:
             if deathdate < date:
                 errors.append(Error('Death date before birth date', 0, [person]))
+
+        sizeallnames = len(allnames)
+        sizeallnamesunique = len(set(allnames))
+        if sizeallnamesunique < sizeallnames:
+            errors.append(Error('US25: Not all names unique', 3, [person]))
+
+
 
     for family in families:
         #Make sure that the children aren't born within 8 months of each other if they aren't twins
