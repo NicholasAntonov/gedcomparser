@@ -119,12 +119,12 @@ def parse(filename):
                 # Families
                 elif tag == 'HUSB':
                     husband = get_by_id(people, args)
-                    if husband.get('sex') != 'M':
+                    if husband != None and husband.get('sex') == 'M':
                         errors.append(Error('Error US21: Incorrect gender for role', 1, current['id']))
                     current['husband'] = args
                 elif tag == 'WIFE':
                     wife = get_by_id(people, args)
-                    if wife.get('sex') != 'F':
+                    if wife != None and wife.get('sex') == 'F':
                         errors.append(Error('Error US21: Incorrect gender for role', 1, current['id'])) 
                     current['wife'] = args
                 elif tag == 'MARR':
@@ -253,5 +253,11 @@ if __name__ == "__main__":
         outfile.write(str(pt))
         outfile.write('\n\n\n\n\n')
         outfile.write(str(ptfam))
+
+    with open('errors.txt', 'w') as outfile:
+        for error in errors:
+            outfile.write(error.title + ': ')
+            outfile.write(str(error.offenders))
+            outfile.write('\n')
 
     print(json.dumps([(error.title) for error in errors], indent=4))
