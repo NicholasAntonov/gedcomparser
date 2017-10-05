@@ -155,16 +155,21 @@ def parse(filename):
 
     # Final pass through data to do calculations that can only be done after parse
     for person in people:
-        date = person.get('birt-date')
+        birthdate = person.get('birt-date')
+        marrdate = person.get('marr-date')
         deathdate = person.get('deat-date')
         age_end = deathdate if deathdate != None else now
-        if date != None:
+        if birthdate != None:
             delta = age_end - date
             person['age'] = delta.days / 365.25
 
-        if date and deathdate:
-            if deathdate < date:
+        if birthdate and deathdate:
+            if deathdate < birthdate:
                 errors.append(Error('Death date before birth date', 0, [person]))
+
+        if marrdate and deathdate:
+            if deathdate < marrdate:
+                errors.append(Error('Marriage date after Death Date', 0, [person]))
 
         sizeallnames = len(allnames)
         sizeallnamesunique = len(set(allnames))
@@ -194,7 +199,7 @@ def parse(filename):
             if marrdate != None:
                 if ((childbirth - marrdate).days) < 0:
                     errors.append(Error('Anomaly US08: Birth before marriage of parents', 2, [child]))
-                    
+
             for otherchild in family.get('children'):
                 if (otherchild == child):
                     continue
@@ -205,8 +210,8 @@ def parse(filename):
                         errors.append(Error('Error US03: Child not a twin and born within 8 months of another child', 1, [child]))
                 if (otherchild == childspouse):
                     errors.append(Error('Error US18: Siblings should not marry', 1, [child, childspouse]))
-        
-        
+
+
         if family.get('div-date') == None:
             husband = get_by_id(people, family.get('husband'))
             wife = get_by_id(people, family.get('wife'))
