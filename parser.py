@@ -56,6 +56,7 @@ def parse(filename):
     errors = []
     allnames = []
 
+
     now = datetime.datetime.now()
     with open(filename) as f:
         content = f.readlines()
@@ -63,17 +64,21 @@ def parse(filename):
         current_type = None
         current = None
         prev = None
+
+        def append_current():
+            if current != None:
+                if current_type == 'INDI':
+                    people.append(current)
+                else:
+                    families.append(current)
+
         for line in content:
             if debug:
                 print('-->{}'.format(line.strip()))
             analysis = ''
             if re.match(indi_fam_format, line):
                 # Handle saving the last object we were parsing
-                if current != None:
-                    if current_type == 'INDI':
-                        people.append(current)
-                    else:
-                        families.append(current)
+                append_current()
 
                 # Parse and start handling the new object
                 m = re.match(indi_fam_format, line)
@@ -146,12 +151,7 @@ def parse(filename):
             if debug:
                 print('<--{}'.format(analysis))
 
-        if current != None:
-            if current_type == 'INDI':
-                people.append(current)
-            else:
-                families.append(current)
-
+        append_current()
 
     # Final pass through data to do calculations that can only be done after parse
     for person in people:
