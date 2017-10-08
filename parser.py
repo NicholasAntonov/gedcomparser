@@ -165,7 +165,7 @@ def parse(filename):
         deathdate = person.get('deat-date')
         age_end = deathdate if deathdate != None else now
         if birthdate != None:
-            delta = age_end - date
+            delta = age_end - birthdate
             person['age'] = delta.days / 365.25
 
         if birthdate and deathdate:
