@@ -114,7 +114,7 @@ def parse(filename):
                     current['name'] = args
 
                     if args in allnames:
-                        errors.append(Error('US25: Not all names unique', 1, [person]))
+                        errors.append(Error('US25: Not all names unique', 1, [current]))
                     else:
                         allnames.append(args)
 
