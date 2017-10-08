@@ -112,7 +112,12 @@ def parse(filename):
                 # Individuals
                 if tag == 'NAME':
                     current['name'] = args
-                    allnames.append(args)
+
+                    if args in allnames:
+                        errors.append(Error('US25: Not all names unique', 1, [person]))
+                    else:
+                        allnames.append(args)
+
                 elif tag == 'SEX':
                     current['sex'] = args
                 elif tag == 'DEAT':
@@ -170,11 +175,6 @@ def parse(filename):
         if marrdate and deathdate:
             if deathdate < marrdate:
                 errors.append(Error('Marriage date after Death Date', 0, [person]))
-
-        sizeallnames = len(allnames)
-        sizeallnamesunique = len(set(allnames))
-        if sizeallnamesunique < sizeallnames:
-            errors.append(Error('US25: Not all names unique', 3, [person]))
 
 
 
