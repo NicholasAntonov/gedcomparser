@@ -17,11 +17,7 @@ class ErrorOnGenderRoles(unittest.TestCase):
 
     def test_fail_finds_id(self):
         people, families, errors = parse('ladyhusband.ged')
-        self.assertEqual(errors[0].offenders[0], '@F1@')
-
-    def test_correct_number_of_offenders(self):
-        people, families, errors = parse('ladyhusband.ged')
-        self.assertEqual(len(errors[0].offenders), 1)
+        self.assertEqual(errors[0].offenders, '@F1@')
 
     def test_correct_severity(self):
         people, families, errors = parse('ladyhusband.ged')
