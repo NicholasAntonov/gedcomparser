@@ -114,7 +114,7 @@ def parse(filename):
                     current['name'] = args
 
                     if args in allnames:
-                        errors.append(Error('US25: Not all names unique', 1, [person]))
+                        errors.append(Error('Error US25: Not all names unique', 1, [args]))
                     else:
                         allnames.append(args)
 
@@ -125,16 +125,16 @@ def parse(filename):
                 elif tag == 'DATE':
                     current[prev + '-date'] = datetime.datetime.strptime(args, '%d %b %Y')
                     if current[prev + '-date'] >= now:
-                        errors.append(Error('Date after current date', 1, [current['id']]))
+                        errors.append(Error('Error US01: Date after current date', 1, [current['id']]))
                 # Families
                 elif tag == 'HUSB':
                     husband = get_by_id(people, args)
-                    if husband != None and husband.get('sex') == 'M':
+                    if husband != None and husband.get('sex') != 'M':
                         errors.append(Error('Error US21: Incorrect gender for role', 1, current['id']))
                     current['husband'] = args
                 elif tag == 'WIFE':
                     wife = get_by_id(people, args)
-                    if wife != None and wife.get('sex') == 'F':
+                    if wife != None and wife.get('sex') != 'F':
                         errors.append(Error('Error US21: Incorrect gender for role', 1, current['id'])) 
                     current['wife'] = args
                 elif tag == 'MARR':
@@ -170,11 +170,11 @@ def parse(filename):
 
         if birthdate and deathdate:
             if deathdate < birthdate:
-                errors.append(Error('Death date before birth date', 0, [person]))
+                errors.append(Error('Error US03: Death date before birth date', 0, [person]))
 
         if marrdate and deathdate:
             if deathdate < marrdate:
-                errors.append(Error('Marriage date after Death Date', 0, [person]))
+                errors.append(Error('Error US05: Marriage date after Death Date', 0, [person]))
 
 
 
