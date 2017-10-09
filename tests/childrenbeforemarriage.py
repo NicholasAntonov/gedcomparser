@@ -1,12 +1,7 @@
 import unittest
 from parser import parse
 
-class ErrorOnFutureDates(unittest.TestCase):
-
-    def test_sample(self):
-        people, families, errors = parse('sample.ged')
-        self.assertEqual(len(errors), 1)
-
+class ChildrenBeforeMarriage(unittest.TestCase):
     def test_born_before(self):
         people, families, errors = parse('bornbeforemarriage.ged')
         self.assertEqual(len(errors), 3)
