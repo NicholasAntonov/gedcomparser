@@ -1,5 +1,5 @@
 import unittest
-from parser import parse
+from _parser import parse
 
 class ErrorOnMultipleFirstNames(unittest.TestCase):
 
