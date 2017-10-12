@@ -1,0 +1,47 @@
+0 HEAD
+1 SOUR Family Echo
+2 WWW http://www.familyecho.com/
+1 FILE Family 2
+1 DATE 11 OCT 2017
+1 DEST ANSTFILE
+1 GEDC
+2 VERS 5.5.1
+2 FORM LINEAGE-LINKED
+1 SUBM @I1@
+2 NAME theforge
+1 SUBN
+1 CHAR UTF-8
+0 @I1@ INDI
+1 NAME Alive /Person/
+2 GIVN Alive
+2 SURN Person
+2 _MARNM Person
+1 BIRT
+2 DATE 3 JUL 1977
+1 FAMC @F1@
+0 @I2@ INDI
+1 NAME Dead /Person/
+2 GIVN Dead
+2 SURN Person
+2 _MARNM Person
+1 SEX M
+1 BIRT
+2 DATE 4 FEB 1911
+1 DEAT Y
+2 DATE 10 JUN 1981
+1 FAMS @F1@
+0 @I3@ INDI
+1 NAME Alive /Person 2/
+2 GIVN Alive
+2 SURN Person 2
+2 _MARNM Person 2
+1 SEX F
+1 BIRT
+2 DATE 2 FEB 1960
+1 FAMS @F1@
+0 @F1@ FAM
+1 HUSB @I2@
+1 WIFE @I3@
+1 CHIL @I1@
+1 _CURRENT Y
+0 TRLR

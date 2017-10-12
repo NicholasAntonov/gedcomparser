@@ -251,6 +251,15 @@ if __name__ == "__main__":
         ptfam.add_row([fam['id'], fam.get('marr-date'), fam.get('div-date'), fam.get('husband'), None if husband == None else husband.get('name'), fam.get('wife'), None if wife == None else wife.get('name'), fam.get('children')])
     print(ptfam)
 
+
+    iseedeadpeople = PrettyTable()
+    iseedeadpeople.field_names = ['Dead People','Death Date']
+    for person in people:
+        if person.get('deat-date')!=None:
+            iseedeadpeople.add_row([person['name'],person.get('deat-date')])
+    print(iseedeadpeople)
+
+
     with open('families.txt', 'w') as outfile:
         outfile.write(str(ptfam))
 
@@ -264,5 +273,8 @@ if __name__ == "__main__":
             outfile.write(error.title + ': ')
             outfile.write(str(error.offenders))
             outfile.write('\n')
+
+    with open('deadpeople.txt', 'w') as outfile:
+        outfile.write(str(iseedeadpeople))
 
     print(json.dumps([(error.title) for error in errors], indent=4))
