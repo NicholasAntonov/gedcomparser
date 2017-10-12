@@ -194,11 +194,11 @@ def parse(filename):
             for day in daysbornon:
                 daysdone = daysbornon.count(day)
                 if daysdone>=5:
-                    errors.append(Error('Anomaly US14: More than 5 birthdates', 4, [child]))
+                    errors.append(Error('Error US14: More than 5 birthdates', 4, [child]))
 
             if marrdate != None:
                 if ((childbirth - marrdate).days) < 0:
-                    errors.append(Error('Anomaly US08: Birth before marriage of parents', 2, [child]))
+                    errors.append(Error('Error US08: Birth before marriage of parents', 2, [child]))
 
             for otherchild in family.get('children'):
                 if (otherchild == child):

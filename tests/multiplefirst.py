@@ -1,5 +1,5 @@
 import unittest
-from _parser import parse
+from gedcom_parser import parse
 
 class ErrorOnMultipleFirstNames(unittest.TestCase):
     def test_fail_multiplefirst(self):

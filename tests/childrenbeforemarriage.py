@@ -1,5 +1,5 @@
 import unittest
-from _parser import parse
+from gedcom_parser import parse
 
 class ChildrenBeforeMarriage(unittest.TestCase):
     def test_born_before(self):
