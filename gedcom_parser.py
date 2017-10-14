@@ -185,15 +185,6 @@ def parse(filename):
         if husband != None:  
             namelist = husband.get('name').split()
             hussurrname = namelist[len(namelist)-1]
-
-        wife = get_by_id(people, family.get('wife'))
-        wifesurrname = ""       
-        if wife != None:
-            namelist = wife.get('name').split()
-            wifesurrname = namelist[len(namelist)-1]
-        #Wife doesn't have husbands name
-        if wife != None and husband != None and hussurrname != wifesurrname:
-                errors.append(Error('Error US16: Not Male last name', 0, [wife.get('id')]))
         childlist = family.get('children')
         for child in childlist:
             childobject = get_by_id(people, child)

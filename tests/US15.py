@@ -9,11 +9,11 @@ class US15(unittest.TestCase):
 
     def test_fail_on_16_siblings(self):
         people, families, errors = parse('manysiblings.ged')
-        self.assertEqual(len(errors), 4)
+        self.assertEqual(len(errors), 3)
 
     def test_fail_finds_id(self):
         people, families, errors = parse('manysiblings.ged')
-        self.assertEqual(errors[3].offenders[0], '@F1@')
+        self.assertEqual(errors[2].offenders[0], '@F1@')
 
 
 if __name__ == '__main__':
