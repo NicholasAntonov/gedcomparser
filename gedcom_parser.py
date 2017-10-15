@@ -172,16 +172,25 @@ def parse(filename):
             if deathdate < birthdate:
                 errors.append(Error('Error US03: Death date before birth date', 0, [person]))
 
-        if marrdate and deathdate:
-            if deathdate < marrdate:
-                errors.append(Error('Error US05: Marriage date after Death Date', 0, [person]))
-
-
-
     for family in families:
         #Make sure that the children aren't born within 8 months of each other if they aren't twins
         #Also make sure siblings aren't married to each other
         marrdate = family.get('marr-date')
+        husband = get_by_id(people, family.get('husband'))
+        wife = get_by_id(people, family.get('wife'))
+
+        for p in [husband, wife]:
+            if p:
+                birthdate = p.get('birt-date')
+                deathdate = p.get('deat-date')
+
+                if marrdate and deathdate:
+                    if deathdate < marrdate:
+                        errors.append(Error('Error US05: Marriage date after Death Date', 0, [p]))
+
+                if birthdate and marrdate:
+                    if marrdate < birthdate:
+                        errors.append(Error('Error US02: Marriage date before birth date', 0, [p]))
 
         for child in family.get('children'):
             childobject = get_by_id(people, child)
@@ -213,8 +222,6 @@ def parse(filename):
 
 
         if family.get('div-date') == None:
-            husband = get_by_id(people, family.get('husband'))
-            wife = get_by_id(people, family.get('wife'))
             if husband:
                 husband['spouse'] = family.get('wife')
             if wife:
