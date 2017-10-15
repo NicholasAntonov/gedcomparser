@@ -227,6 +227,19 @@ def parse(filename):
             childobject = get_by_id(people, child)
             childbirth = childobject.get('birt-date')
             childspouse = childobject.get('spouse')
+            childrenofchild = childobject.get('children')
+            for childlevel3 in childrenofchild:
+                childlevel3object = get_by_id(people, childlevel3)
+                for otherchild in childlist:
+                    if (otherchild == child):
+                        continue
+                    else:
+                        otherchildobject = get_by_id(people, otherchild)
+                        otherchildchildren = otherchildobject.get('children')
+                        for otherchildchild in otherchildchildren:
+                            otherchildchildobject = get_by_id(people, otherchildchild)
+                            if (childlevel3object != None) and (otherchildchildobject != None) and (childlevel3object.get('spouse') == otherchildchild):
+                                errors.append(Error('Error US19: First cousins should not marry', 1, [childlevel3, otherchildchild]))
 
             daysbornon = []
             daysdone = 0
@@ -245,6 +258,12 @@ def parse(filename):
                     continue
                 else:
                     otherchildobject = get_by_id(people, otherchild)
+                    otherchildchildren = otherchildobject.get('children')
+                    for otherchildchild in otherchildchildren:
+                        otherchildchildobject = get_by_id(people, otherchildchild)
+                        unclespouse = otherchildchildobject.get('spouse')
+                        if childspouse != None and unclespouse != None and (childspouse == unclespouse):
+                            errors.append(Error('Error US20: Aunts/Uncles cannot marry niblings', 1, [child, otherchildchild]))             
                     otherchildbirth = otherchildobject.get('birt-date')
                     if (math.fabs((childbirth-otherchildbirth).days < 240) and math.fabs((childbirth-otherchildbirth).days > 2)):
                         errors.append(Error('Error US03: Child not a twin and born within 8 months of another child', 1, [child]))
