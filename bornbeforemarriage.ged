@@ -1,8 +1,8 @@
 0 HEAD
 1 SOUR Family Echo
 2 WWW http://www.familyecho.com/
-1 FILE Family 2
-1 DATE 30 SEP 2017
+1 FILE Family 5
+1 DATE 14 OCT 2017
 1 DEST ANSTFILE
 1 GEDC
 2 VERS 5.5.1
@@ -30,9 +30,9 @@
 2 DATE 23 MAY 1969
 1 FAMS @F1@
 0 @I3@ INDI
-1 NAME Stacey /Sowa/
+1 NAME Stacey /Braun/
 2 GIVN Stacey
-2 SURN Sowa
+2 SURN Braun
 2 _MARNM Braun
 1 SEX F
 1 BIRT

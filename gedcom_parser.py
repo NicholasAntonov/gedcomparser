@@ -160,6 +160,7 @@ def parse(filename):
 
     # Final pass through data to do calculations that can only be done after parse
     for person in people:
+
         birthdate = person.get('birt-date')
         marrdate = person.get('marr-date')
         deathdate = person.get('deat-date')
@@ -173,6 +174,36 @@ def parse(filename):
                 errors.append(Error('Error US03: Death date before birth date', 0, [person]))
 
     for family in families:
+        husband = get_by_id(people, family.get('husband'))
+        hussurrname = ""    
+        if husband != None:  
+            namelist = husband.get('name').split()
+            hussurrname = namelist[len(namelist)-1]
+        childlist = family.get('children')
+        for child in childlist:
+            childobject = get_by_id(people, child)
+            namelist = (childobject.get('name').split())
+            childsurrname = namelist[len(namelist)-1]
+            sex = childobject.get('sex')
+            if sex == 'M':
+                if childsurrname != hussurrname:
+                    errors.append(Error('Error US16: Not Male last name', 0, [childobject.get('id')])) 
+            if sex == 'F':
+                #If the child is a female and is married they will be a family so
+                #they will still be checked for errors
+                #Yes I know this can be put in the other loop, I'm going to do
+                #that during refactor
+                #Is a girl and is not married
+                if childobject.get('spouse') == None:
+                    if childsurrname != hussurrname:
+                        errors.append(Error('Error US16: Not Male last name', 0, [childobject.get('id')]))                             
+
+
+        #Make sure there are no more than 15 children per family
+        if len(childlist) > 15:
+            errors.append(Error('Error US15: More than 15 children in a family', 0, [family.get('id')]))           
+
+
         #Make sure that the children aren't born within 8 months of each other if they aren't twins
         #Also make sure siblings aren't married to each other
         marrdate = family.get('marr-date')
@@ -192,7 +223,7 @@ def parse(filename):
                     if marrdate < birthdate:
                         errors.append(Error('Error US02: Marriage date before birth date', 0, [p]))
 
-        for child in family.get('children'):
+        for child in childlist:
             childobject = get_by_id(people, child)
             childbirth = childobject.get('birt-date')
             childspouse = childobject.get('spouse')
