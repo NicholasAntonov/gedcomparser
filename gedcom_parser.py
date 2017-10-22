@@ -175,19 +175,31 @@ def parse(filename):
 
     for family in families:
         husband = get_by_id(people, family.get('husband'))
-        hussurrname = ""    
-        if husband != None:  
+        wife = get_by_id(people, family.get('wife'))
+        hussurrname = ""
+        if husband != None:
             namelist = husband.get('name').split()
             hussurrname = namelist[len(namelist)-1]
         childlist = family.get('children')
+
         for child in childlist:
             childobject = get_by_id(people, child)
             namelist = (childobject.get('name').split())
             childsurrname = namelist[len(namelist)-1]
+            childbirth = childobject.get('birt-date')
+            if husband != None:
+                diff = (childbirth - husband.get('birt-date')).days / 365.25
+                if diff > 80:
+                    errors.append(Error('US12: Dad too old', 0, [husband, childobject]))
+            if wife != None:
+                diff = (childbirth - wife.get('birt-date')).days / 365.25
+                if diff > 60:
+                    errors.append(Error('US12: Mom too old', 0, [wife, childobject]))
+
             sex = childobject.get('sex')
             if sex == 'M':
                 if childsurrname != hussurrname:
-                    errors.append(Error('Error US16: Not Male last name', 0, [childobject.get('id')])) 
+                    errors.append(Error('Error US16: Not Male last name', 0, [childobject.get('id')]))
             if sex == 'F':
                 #If the child is a female and is married they will be a family so
                 #they will still be checked for errors
@@ -196,7 +208,7 @@ def parse(filename):
                 #Is a girl and is not married
                 if childobject.get('spouse') == None:
                     if childsurrname != hussurrname:
-                        errors.append(Error('Error US16: Not Male last name', 0, [childobject.get('id')]))                             
+                        errors.append(Error('Error US16: Not Male last name', 0, [childobject.get('id')]))
 
 
         #Make sure there are no more than 15 children per family

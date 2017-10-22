@@ -1,0 +1,35 @@
+0 HEAD
+1 SOUR Family Echo
+2 WWW http://www.familyecho.com/
+1 FILE Family 4
+1 DATE 21 OCT 2017
+1 DEST ANSTFILE
+1 GEDC
+2 VERS 5.5.1
+2 FORM LINEAGE-LINKED
+1 SUBM @I1@
+2 NAME Nicholas Antonov
+1 SUBN
+1 CHAR UTF-8
+0 @I1@ INDI
+1 NAME Nicholas /Antonov/
+2 GIVN Nicholas
+2 SURN Antonov
+2 _MARNM Antonov
+1 SEX M
+1 BIRT
+2 DATE 1 JAN 1900
+1 FAMS @F1@
+0 @I2@ INDI
+1 NAME NickJr /Antonov/
+2 GIVN NickJr
+2 SURN Antonov
+2 _MARNM Antonov
+1 SEX M
+1 BIRT
+2 DATE 1 JAN 1990
+1 FAMC @F1@
+0 @F1@ FAM
+1 HUSB @I1@
+1 CHIL @I2@
+0 TRLR
