@@ -84,6 +84,11 @@ def parse(filename):
                 m = re.match(indi_fam_format, line)
                 tag = m.group(2)
                 identifier = m.group(1)
+                if get_by_id(people, identifier) or get_by_id(families, identifier):
+                    firstperson = get_by_id(people, identifier)
+                    firstfamily = get_by_id(families, identifier)
+                    offender = firstperson if firstperson else firstfamily
+                    errors.append(Error('Error US25: Not all names unique', 1, [offender]))
 
                 current_type = tag
                 if current_type == 'INDI':
