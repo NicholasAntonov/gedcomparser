@@ -318,7 +318,7 @@ if __name__ == "__main__":
     marriedlivingpeople.field_names = ['Married People']
     for person in people:
         if person.get('spouse')!=None:
-            if person.get('deat-date')!=None: 
+            if person.get('deat-date')==None: 
                 marriedlivingpeople.add_row([person['name']])
     print(marriedlivingpeople)
         
