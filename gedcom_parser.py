@@ -173,6 +173,8 @@ def parse(filename):
         if birthdate != None:
             delta = age_end - birthdate
             person['age'] = delta.days / 365.25
+            if (delta.days / 365.25) >= 150:
+                errors.append(Error('Error US07: Greater than 150 years of age', 0, [person]))
 
         if birthdate and deathdate:
             if deathdate < birthdate:
@@ -196,10 +198,18 @@ def parse(filename):
                 diff = (childbirth - husband.get('birt-date')).days / 365.25
                 if diff > 80:
                     errors.append(Error('US12: Dad too old', 0, [husband, childobject]))
+                if husband.get('deat-date') != None:
+                    delta = (now - childbirth) - (now - husband.get('deat-date')) 
+                    if (delta.days / 365.25) < 0.75:
+                        errors.append(Error('US09: Child born after Father death', 0, [husband, childobject]))
             if wife != None:
                 diff = (childbirth - wife.get('birt-date')).days / 365.25
                 if diff > 60:
                     errors.append(Error('US12: Mom too old', 0, [wife, childobject]))
+                if wife.get('deat-date') != None:
+                    delta = (now - childbirth) - (now - wife.get('deat-date'))
+                    if (delta.days / 365.25) < 0:
+                        errors.append(Error('US09: Child born after Mother death', 0, [wife, childobject]))
 
             sex = childobject.get('sex')
             if sex == 'M':
