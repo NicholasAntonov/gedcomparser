@@ -166,8 +166,11 @@ def parse(filename):
     # Final pass through data to do calculations that can only be done after parse
     for person in people:
 
+
         birthdate = person.get('birt-date')
         marrdate = person.get('marr-date')
+        perspouce = person.get('spouse')
+
         deathdate = person.get('deat-date')
         age_end = deathdate if deathdate != None else now
         if birthdate != None:
@@ -266,7 +269,7 @@ def parse(filename):
                     if (math.fabs((childbirth-otherchildbirth).days < 240) and math.fabs((childbirth-otherchildbirth).days > 2)):
                         errors.append(Error('Error US03: Child not a twin and born within 8 months of another child', 1, [child]))
                 if (otherchild == childspouse):
-                    errors.append(Error('Error US18: Siblings should not marry', 1, [child, childspouse]))
+                    errors.append(Error('Error US18: Siblings should not marry', 1, child))
 
 
         if family.get('div-date') == None:
@@ -274,6 +277,42 @@ def parse(filename):
                 husband['spouse'] = family.get('wife')
             if wife:
                 wife['spouse'] = family.get('husband')
+
+
+    for person in people:
+
+        #For some reason I can access spouses down here but not in the parse function....
+        #.....but hey it works
+        birthdate = person.get('birt-date')
+        marrdate = person.get('marr-date')
+        perspouce = person.get('spouse')
+
+        name = person.get('name')
+        identity = person.get('id')
+        for otherpeople in people:
+            if otherpeople.get('name') == name and otherpeople.get('id') != identity and birthdate == otherpeople.get('birt-date'):
+                errors.append(Error('Error US23: Not unique names and birth date', 0, person['id']))            
+
+        #DFS to get all descendents
+        descendants = []
+        children = person.get('children')
+
+        stack = []
+        stack.append(children)
+        while stack:
+            descend = stack.pop()
+            if descend != None:
+                for child in descend:
+                    childperson = get_by_id(people, child)
+                    childchildren = childperson.get('children')
+                    descendants.append(child)
+                    stack.append(childchildren)
+
+        #Loop through to make sure they're not married to desc        
+        for desc in descendants:
+            if perspouce == desc and perspouce != None:
+                errors.append(Error('Error US17: Cannot marry descendants', 0, person['id']))
+
 
     return (people, families, errors)
 
@@ -291,7 +330,10 @@ if __name__ == "__main__":
 
     pt = PrettyTable()
     pt.field_names = ['ID', 'NAME', 'GENDER', 'BIRTHDAY', 'AGE', 'DEAD', 'DEATH', 'CHILD', 'SPOUSE']
+
+
     for person in people:
+
         pt.add_row([person['id'], person['name'], person['sex'], person.get('birt-date'), person.get('age'), person.get('dead'),person.get('deat-date'),person.get('children'),person.get('spouse')])
     print(pt)
 
