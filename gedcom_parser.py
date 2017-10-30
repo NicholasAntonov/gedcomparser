@@ -327,6 +327,13 @@ if __name__ == "__main__":
     print(iseedeadpeople)
 
 
+    singlelivingpeople = PrettyTable()
+    singlelivingpeople.field_names = ['Single Living People']
+    for person in people:
+        if person.get('deat-date')==None and person.get('spouse')==None:
+                singlelivingpeople.add_row([person['name']])
+    print(singlelivingpeople)
+
     with open('families.txt', 'w') as outfile:
         outfile.write(str(ptfam))
 
@@ -343,6 +350,9 @@ if __name__ == "__main__":
 
     with open('deadpeople.txt', 'w') as outfile:
         outfile.write(str(iseedeadpeople))
+
+    with open('singlelivingpeople.txt', 'w') as outfile:
+        outfile.write(str(singlelivingpeople))
 
     print(json.dumps([(error.title) for error in errors], indent=4))
 
