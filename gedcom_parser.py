@@ -87,10 +87,7 @@ def parse(filename):
                 tag = m.group(2)
                 identifier = m.group(1)
                 if get_by_id(people, identifier) or get_by_id(families, identifier):
-                    firstperson = get_by_id(people, identifier)
-                    firstfamily = get_by_id(families, identifier)
-                    offender = firstperson if firstperson else firstfamily
-                    errors.append(Error('Error US25: Not all names unique', 1, [offender]))
+                    errors.append(Error('Error US22: Not all ids unique', 1, [identifier]))
 
                 current_type = tag
                 if current_type == 'INDI':
@@ -179,15 +176,17 @@ def parse(filename):
             delta = age_end - birthdate
             person['age'] = delta.days / 365.25
             if (delta.days / 365.25) >= 150:
-                errors.append(Error('Error US07: Greater than 150 years of age', 0, [person]))
+                errors.append(Error('Error US07: Greater than 150 years of age', 0, [person.get('id')]))
 
         if birthdate and deathdate:
             if deathdate < birthdate:
-                errors.append(Error('Error US03: Death date before birth date', 0, [person]))
+                errors.append(Error('Error US03: Death date before birth date', 0, [person.get('id')]))
 
     for family in families:
-        husband = get_by_id(people, family.get('husband'))
-        wife = get_by_id(people, family.get('wife'))
+        husband_id = family.get('husband')
+        wife_id = family.get('wife')
+        husband = get_by_id(people, husband_id)
+        wife = get_by_id(people, wife_id)
         hussurrname = ""
         if husband != None:
             namelist = husband.get('name').split()
@@ -202,24 +201,24 @@ def parse(filename):
             if husband != None:
                 diff = (childbirth - husband.get('birt-date')).days / 365.25
                 if diff > 80:
-                    errors.append(Error('US12: Dad too old', 0, [husband, childobject]))
+                    errors.append(Error('US12: Dad too old', 0, [husband_id, child]))
                 if husband.get('deat-date') != None:
                     delta = (now - childbirth) - (now - husband.get('deat-date')) 
                     if (delta.days / 365.25) < 0.75:
-                        errors.append(Error('US09: Child born after Father death', 0, [husband, childobject]))
+                        errors.append(Error('US09: Child born after Father death', 0, [husband_id, child]))
             if wife != None:
                 diff = (childbirth - wife.get('birt-date')).days / 365.25
                 if diff > 60:
-                    errors.append(Error('US12: Mom too old', 0, [wife, childobject]))
+                    errors.append(Error('US12: Mom too old', 0, [wife_id, child]))
                 if wife.get('deat-date') != None:
                     delta = (now - childbirth) - (now - wife.get('deat-date'))
                     if (delta.days / 365.25) < 0:
-                        errors.append(Error('US09: Child born after Mother death', 0, [wife, childobject]))
+                        errors.append(Error('US09: Child born after Mother death', 0, [wife_id, child]))
 
             sex = childobject.get('sex')
             if sex == 'M':
                 if childsurrname != hussurrname:
-                    errors.append(Error('Error US16: Not Male last name', 0, [childobject.get('id')]))
+                    errors.append(Error('Error US16: Not Male last name', 0, [child]))
             if sex == 'F':
                 #If the child is a female and is married they will be a family so
                 #they will still be checked for errors
@@ -228,12 +227,12 @@ def parse(filename):
                 #Is a girl and is not married
                 if childobject.get('spouse') == None:
                     if childsurrname != hussurrname:
-                        errors.append(Error('Error US16: Not Male last name', 0, [childobject.get('id')]))
+                        errors.append(Error('Error US16: Not Male last name', 0, [child]))
 
 
         #Make sure there are no more than 15 children per family
         if len(childlist) > 15:
-            errors.append(Error('Error US15: More than 15 children in a family', 0, [family.get('id')]))           
+            errors.append(Error('Error US15: More than 15 children in a family', 0, [family.get('id')]))
 
 
         #Make sure that the children aren't born within 8 months of each other if they aren't twins
@@ -249,11 +248,11 @@ def parse(filename):
 
                 if marrdate and deathdate:
                     if deathdate < marrdate:
-                        errors.append(Error('Error US05: Marriage date after Death Date', 0, [p]))
+                        errors.append(Error('Error US05: Marriage date after Death Date', 0, [p.get('id')]))
 
                 if birthdate and marrdate:
                     if marrdate < birthdate:
-                        errors.append(Error('Error US02: Marriage date before birth date', 0, [p]))
+                        errors.append(Error('Error US02: Marriage date before birth date', 0, [p.get('id')]))
 
         for child in childlist:
             childobject = get_by_id(people, child)
@@ -303,7 +302,7 @@ def parse(filename):
         identity = person.get('id')
         for otherpeople in people:
             if otherpeople.get('name') == name and otherpeople.get('id') != identity and birthdate == otherpeople.get('birt-date'):
-                errors.append(Error('Error US23: Not unique names and birth date', 0, person['id']))            
+                errors.append(Error('Error US23: Not unique names and birth date', 0, person['id']))
 
         #DFS to get all descendents
         descendants = []
@@ -320,7 +319,7 @@ def parse(filename):
                     descendants.append(child)
                     stack.append(childchildren)
 
-        #Loop through to make sure they're not married to desc        
+        #Loop through to make sure they're not married to desc
         for desc in descendants:
             if perspouce == desc and perspouce != None:
                 errors.append(Error('Error US17: Cannot marry descendants', 0, person['id']))
