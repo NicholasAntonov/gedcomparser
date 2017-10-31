@@ -384,7 +384,7 @@ if __name__ == "__main__":
         outfile.write('\nErrors\n')
         for error in errors:
             outfile.write(error.title + '\n')
-            outfile.write('IDs affected: ' + str(error.offenders))
+            outfile.write('IDs affected: ' + str(', '.join(error.offenders)))
             outfile.write('\n')
 
         outfile.write('\nDead People\n')
