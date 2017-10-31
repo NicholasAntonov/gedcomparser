@@ -195,15 +195,19 @@ def parse(filename):
 
         for child in childlist:
             childobject = get_by_id(people, child)
+            if childobject == None:
+                print(child)
             namelist = (childobject.get('name').split())
             childsurrname = namelist[len(namelist)-1]
             childbirth = childobject.get('birt-date')
             if husband != None:
-                diff = (childbirth - husband.get('birt-date')).days / 365.25
-                if diff > 80:
-                    errors.append(Error('US12: Dad too old', 0, [husband_id, child]))
+                husbandbirth = husband.get('birt-date')
+                if husbandbirth != None:
+                    diff = (childbirth - husbandbirth).days / 365.25
+                    if diff > 80:
+                        errors.append(Error('US12: Dad too old', 0, [husband_id, child]))
                 if husband.get('deat-date') != None:
-                    delta = (now - childbirth) - (now - husband.get('deat-date')) 
+                    delta = (now - childbirth) - (now - husband.get('deat-date'))
                     if (delta.days / 365.25) < 0.75:
                         errors.append(Error('US09: Child born after Father death', 0, [husband_id, child]))
             if wife != None:
