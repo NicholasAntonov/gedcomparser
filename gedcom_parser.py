@@ -346,10 +346,6 @@ if __name__ == "__main__":
     for person in people:
 
         pt.add_row([person['id'], person['name'], person['sex'], person.get('birt-date'), person.get('age'), person.get('dead'),person.get('deat-date'),person.get('children'),person.get('spouse')])
-    print(pt)
-
-    with open('people.txt', 'w') as outfile:
-        outfile.write(str(pt))
 
     ptfam = PrettyTable()
     ptfam.field_names = ['ID', 'MARRIED', 'DIVORCED', 'HUSBAND ID', 'HUSBAND NAME', 'WIFE ID', 'WIFE NAME', 'CHILDREN']
@@ -357,15 +353,12 @@ if __name__ == "__main__":
         husband = get_by_id(people, fam.get('husband'))
         wife = get_by_id(people, fam.get('wife'))
         ptfam.add_row([fam['id'], fam.get('marr-date'), fam.get('div-date'), fam.get('husband'), None if husband == None else husband.get('name'), fam.get('wife'), None if wife == None else wife.get('name'), fam.get('children')])
-    print(ptfam)
-
 
     iseedeadpeople = PrettyTable()
     iseedeadpeople.field_names = ['Dead People','Death Date']
     for person in people:
         if person.get('deat-date')!=None:
             iseedeadpeople.add_row([person['name'],person.get('deat-date')])
-    print(iseedeadpeople)
 
     marriedlivingpeople = PrettyTable()
     marriedlivingpeople.field_names = ['Married People']
@@ -373,7 +366,6 @@ if __name__ == "__main__":
         if person.get('spouse')!=None:
             if person.get('deat-date')==None: 
                 marriedlivingpeople.add_row([person['name']])
-    print(marriedlivingpeople)
         
 
 
@@ -382,30 +374,28 @@ if __name__ == "__main__":
     for person in people:
         if person.get('deat-date')==None and person.get('spouse')==None:
                 singlelivingpeople.add_row([person['name']])
-    print(singlelivingpeople)
 
-    with open('families.txt', 'w') as outfile:
-        outfile.write(str(ptfam))
-
-    with open('bothtables.txt', 'w') as outfile:
+    with open('output.txt', 'w') as outfile:
+        outfile.write('\nPeople\n')
         outfile.write(str(pt))
-        outfile.write('\n\n\n\n\n')
+        outfile.write('\nFamilies\n')
         outfile.write(str(ptfam))
 
-    with open('errors.txt', 'w') as outfile:
+        outfile.write('\nErrors\n')
         for error in errors:
-            outfile.write(error.title + ': ')
-            outfile.write(str(error.offenders))
+            outfile.write(error.title + '\n')
+            outfile.write('IDs affected: ' + str(error.offenders))
             outfile.write('\n')
 
-    with open('deadpeople.txt', 'w') as outfile:
+        outfile.write('\nDead People\n')
         outfile.write(str(iseedeadpeople))
 
-    with open('marriedlivingpeople.txt', 'w') as outfile:
+        outfile.write('\nMarried Living People\n')
         outfile.write(str(marriedlivingpeople))
 
-    with open('singlelivingpeople.txt', 'w') as outfile:
+        outfile.write('\nSingle Living People\n')
         outfile.write(str(singlelivingpeople))
 
-    print(json.dumps([(error.title) for error in errors], indent=4))
+    with open('output.txt', 'r') as fin:
+        print(fin.read())
 
