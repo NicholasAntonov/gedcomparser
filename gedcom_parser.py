@@ -349,7 +349,7 @@ if __name__ == "__main__":
 
     for person in people:
 
-        pt.add_row([person['id'], person['name'], person['sex'], person.get('birt-date'), person.get('age'), person.get('dead'),person.get('deat-date'),person.get('children'),person.get('spouse')])
+        pt.add_row([person['id'], person.get('name'), person.get('sex'), person.get('birt-date'), person.get('age'), person.get('dead'),person.get('deat-date'),person.get('children'),person.get('spouse')])
 
     ptfam = PrettyTable()
     ptfam.field_names = ['ID', 'MARRIED', 'DIVORCED', 'HUSBAND ID', 'HUSBAND NAME', 'WIFE ID', 'WIFE NAME', 'CHILDREN']
@@ -360,9 +360,13 @@ if __name__ == "__main__":
 
     iseedeadpeople = PrettyTable()
     iseedeadpeople.field_names = ['Dead People','Death Date']
+    recentlydead = PrettyTable()
+    recentlydead.field_names = ["Deceased's name", 'Death Date']
     for person in people:
-        if person.get('deat-date')!=None:
-            iseedeadpeople.add_row([person['name'],person.get('deat-date')])
+        if person.get('deat-date') != None:
+            iseedeadpeople.add_row([person.get('name'), person.get('deat-date')])
+            if (datetime.datetime.now() - person.get('deat-date')).days <= 30:
+                recentlydead.add_row([person.get('name'), person.get('deat-date')])
 
     marriedlivingpeople = PrettyTable()
     marriedlivingpeople.field_names = ['Married People']
@@ -370,7 +374,7 @@ if __name__ == "__main__":
         if person.get('spouse')!=None:
             if person.get('deat-date')==None: 
                 marriedlivingpeople.add_row([person['name']])
-        
+
 
 
     singlelivingpeople = PrettyTable()
@@ -393,6 +397,9 @@ if __name__ == "__main__":
 
         outfile.write('\nDead People\n')
         outfile.write(str(iseedeadpeople))
+
+        outfile.write('\nRecently Dead People\n')
+        outfile.write(str(recentlydead))
 
         outfile.write('\nMarried Living People\n')
         outfile.write(str(marriedlivingpeople))
