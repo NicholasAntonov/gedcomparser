@@ -3,7 +3,7 @@ from gedcom_parser import parse
 
 class ErrorOnMultipleFirstNames(unittest.TestCase):
     def test_fail_multiplefirst(self):
-        people, families, errors = parse('multiplefirst.ged')
+        people, families, errors, lists = parse('multiplefirst.ged')
         self.assertEqual(len(errors), 1)
 
 

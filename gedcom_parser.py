@@ -6,6 +6,7 @@ import json
 import datetime
 import time
 import math
+from collections import defaultdict
 from copy import deepcopy
 from prettytable import PrettyTable
 from error import Error
@@ -163,6 +164,7 @@ def parse(filename):
         append_current()
 
     # Final pass through data to do calculations that can only be done after parse
+    lists = defaultdict(list)
     for person in people:
 
 
@@ -181,6 +183,10 @@ def parse(filename):
         if birthdate and deathdate:
             if deathdate < birthdate:
                 errors.append(Error('Error US03: Death date before birth date', 0, [person.get('id')]))
+
+        if deathdate:
+            if (now - deathdate).days <= 30:
+                lists['recentlydead'].append(person)
 
     for family in families:
         husband_id = family.get('husband')
@@ -329,10 +335,10 @@ def parse(filename):
                 errors.append(Error('Error US17: Cannot marry descendants', 0, person['id']))
 
 
-    return (people, families, errors)
+    return (people, families, errors, lists)
 
 if __name__ == "__main__":
-    people, families, errors = parse(sys.argv[1])
+    people, families, errors, lists = parse(sys.argv[1])
 
     print(output_list(people))
     print(output_list(families))
@@ -360,13 +366,15 @@ if __name__ == "__main__":
 
     iseedeadpeople = PrettyTable()
     iseedeadpeople.field_names = ['Dead People','Death Date']
-    recentlydead = PrettyTable()
-    recentlydead.field_names = ["Deceased's name", 'Death Date']
     for person in people:
         if person.get('deat-date') != None:
             iseedeadpeople.add_row([person.get('name'), person.get('deat-date')])
-            if (datetime.datetime.now() - person.get('deat-date')).days <= 30:
-                recentlydead.add_row([person.get('name'), person.get('deat-date')])
+
+    recentlydead = PrettyTable()
+    recentlydead.field_names = ["Deceased's name", 'Death Date']
+    for person in lists['recentlydead']:
+        recentlydead.add_row([person.get('name'), person.get('deat-date')])
+
 
     marriedlivingpeople = PrettyTable()
     marriedlivingpeople.field_names = ['Married People']

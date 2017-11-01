@@ -5,7 +5,7 @@ from gedcom_parser import parse
 
 class us29(unittest.TestCase):
     def testdead(self):
-    	people, families, errors = parse('2alive1dead.ged')
+    	people, families, errors, lists = parse('2alive1dead.ged')
     	my_file = Path("../deadpeople.txt/..")
     	if my_file.is_file():
     		self.assertEqual()
