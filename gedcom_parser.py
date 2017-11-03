@@ -241,7 +241,7 @@ def parse(filename):
 
 
         #Make sure there are no more than 15 children per family
-        if len(childlist) > 15:
+        if len(childlist) >= 15:
             errors.append(Error('Error US15: More than 15 children in a family', 0, [family.get('id')]))
 
 
