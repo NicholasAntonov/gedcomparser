@@ -289,9 +289,6 @@ def parse(filename):
                     otherchildbirth = otherchildobject.get('birt-date')
                     if (math.fabs((childbirth-otherchildbirth).days < 240) and math.fabs((childbirth-otherchildbirth).days > 2)):
                         errors.append(Error('Error US13: Child not a twin and born within 8 months of another child', 1, [child]))
-                if (otherchild == childspouse):
-                    errors.append(Error('Error US18: Siblings should not marry', 1, child))
-
 
         if family.get('div-date') == None:
             if husband:
@@ -318,8 +315,52 @@ def parse(filename):
         descendants = []
         children = person.get('children')
 
+
+        #Make sure people don't marry their siblings
+        for child in children:
+            childobject=get_by_id(people, child)
+            childspouse = childobject.get('spouse')
+            for otherchild in children:
+                if otherchild == child:
+                    continue
+                else:
+                    if childspouse == otherchild:
+                        errors.append(Error('Error US18: People should not marry their siblings', 0, child))                        
+
+
+        #Make sure kids aren't married to Uncles or Aunts
+        for child in children:
+            childobject=get_by_id(people, child)
+            if childobject != None:
+                childspouse = childobject.get('spouse')
+
+                #Make sure first cousins don't marry
+                thirdlineofchildren = childobject.get('children')
+                for thirdchild in thirdlineofchildren:
+                    thirdchildobject = get_by_id(people, thirdchild)
+                    if thirdchildobject != None:
+                        thirdchildspouse = thirdchildobject.get('spouse')
+                        for otheruncles in children:
+                            if otheruncles == child:
+                                continue
+                            else:
+                                otherunclesobject = get_by_id(people, otheruncles)
+                                if otherunclesobject != None:
+                                    otheruncleschild = otherunclesobject.get('children')
+                                    if thirdchildspouse in otheruncleschild:
+                                        errors.append(Error('Error US19: First Cousins should not marry', 0, thirdchild))                                        
+                for otherchild in children:
+                    if otherchild == child:
+                        continue
+                    else:
+                        otherchildobject = get_by_id(people, otherchild)
+                        if otherchildobject != None:
+                            childofchild = otherchildobject.get('children')
+                            if childspouse in childofchild:
+                                errors.append(Error('Error US20: Should not marry Aunts and Uncles', 0, child))
+        children1 = person.get('children')
         stack = []
-        stack.append(children)
+        stack.append(children1)
         while stack:
             descend = stack.pop()
             if descend != None:
