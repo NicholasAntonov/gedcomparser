@@ -269,14 +269,6 @@ def parse(filename):
             childbirth = childobject.get('birt-date')
             childspouse = childobject.get('spouse')
 
-            daysbornon = []
-            daysdone = 0
-            daysbornon.append(childbirth)
-            for day in daysbornon:
-                daysdone = daysbornon.count(day)
-                if daysdone>=5:
-                    errors.append(Error('Error US14: More than 5 birthdates', 4, [child]))
-
             if marrdate != None:
                 if ((childbirth - marrdate).days) < 0:
                     errors.append(Error('Error US08: Birth before marriage of parents', 2, [child]))
@@ -292,6 +284,17 @@ def parse(filename):
                 if (otherchild == childspouse):
                     errors.append(Error('Error US18: Siblings should not marry', 1, child))
 
+
+        daysbornon = []
+        daysdone = 0
+            
+        for child in childlist:
+            daysbornon.append(childbirth)
+            
+        for day in daysbornon:
+            daysdone = daysbornon.count(day)
+            if daysdone>=5:
+                errors.append(Error('Error US14: More than 5 birthdates', 1, [child]))
 
         if family.get('div-date') == None:
             if husband:
