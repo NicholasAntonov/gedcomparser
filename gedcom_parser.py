@@ -208,7 +208,7 @@ def parse(filename):
             childbirth = childobject.get('birt-date')
             if husband != None:
                 husbandbirth = husband.get('birt-date')
-                if husbandbirth != None:
+                if childbirth != None and husbandbirth != None:
                     diff = (childbirth - husbandbirth).days / 365.25
                     if diff > 80:
                         errors.append(Error('US12: Dad too old', 0, [husband_id, child]))
@@ -217,9 +217,10 @@ def parse(filename):
                     if (delta.days / 365.25) < 0.75:
                         errors.append(Error('US09: Child born after Father death', 0, [husband_id, child]))
             if wife != None:
-                diff = (childbirth - wife.get('birt-date')).days / 365.25
-                if diff > 60:
-                    errors.append(Error('US12: Mom too old', 0, [wife_id, child]))
+                if childbirth != None and wife.get('birt-date') != None:
+                    diff = (childbirth - wife.get('birt-date')).days / 365.25
+                    if diff > 60:
+                        errors.append(Error('US12: Mom too old', 0, [wife_id, child]))
                 if wife.get('deat-date') != None:
                     delta = (now - childbirth) - (now - wife.get('deat-date'))
                     if (delta.days / 365.25) < 0:
