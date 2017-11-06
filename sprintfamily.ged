@@ -397,6 +397,13 @@
 2 _MARNM two
 1 BIRT
 2 DATE 2 JAN 2000
+0 @I42@ INDI
+1 NAME US41badbirth /baddybirthday/
+2 GIVN US41badbirth
+2 SURN baddybirthday
+2 _MARNM baddybirthday
+1 BIRT
+2 DATE 32 FEB 2000
 0 @F1@ FAM
 1 HUSB @I1@
 1 WIFE @I2@
