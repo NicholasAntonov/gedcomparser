@@ -128,9 +128,13 @@ def parse(filename):
                 elif tag == 'DEAT':
                     current['dead'] = args
                 elif tag == 'DATE':
-                    current[prev + '-date'] = datetime.datetime.strptime(args, '%d %b %Y')
-                    if current[prev + '-date'] >= now:
-                        errors.append(Error('Error US01: Date after current date', 1, [current['id']]))
+                    try:
+                        current[prev + '-date'] = datetime.datetime.strptime(args, '%d %b %Y')
+                        if current[prev + '-date'] >= now:
+                            errors.append(Error('Error US01: Date after current date', 1, [current['id']]))
+                    except:
+                        errors.append(Error('Error US42: Date is not valid', 1, [current['id']]))
+
                 # Families
                 elif tag == 'HUSB':
                     husband = get_by_id(people, args)

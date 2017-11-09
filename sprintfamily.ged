@@ -383,6 +383,27 @@
 1 BIRT
 2 DATE 1 JAN 3000
 1 FAMC @F16@
+0 @I41@ INDI
+1 NAME duperone /one/
+2 GIVN duperone
+2 SURN one
+2 _MARNM one
+1 BIRT
+2 DATE 1 JAN 2000
+0 @I41@ INDI
+1 NAME dupertwo /two/
+2 GIVN dupertwo
+2 SURN two
+2 _MARNM two
+1 BIRT
+2 DATE 2 JAN 2000
+0 @I42@ INDI
+1 NAME US41badbirth /baddybirthday/
+2 GIVN US41badbirth
+2 SURN baddybirthday
+2 _MARNM baddybirthday
+1 BIRT
+2 DATE 32 FEB 2000
 0 @F1@ FAM
 1 HUSB @I1@
 1 WIFE @I2@
