@@ -260,6 +260,10 @@ def parse(filename):
             if p:
                 birthdate = p.get('birt-date')
                 deathdate = p.get('deat-date')
+                age = p.get('age')
+
+                if age < 14:
+                    errors.append(Error('Error: US10: Marriage under 14', 0, [p.get('id')]))
 
                 if marrdate and deathdate:
                     if deathdate < marrdate:
