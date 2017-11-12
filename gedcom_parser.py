@@ -295,6 +295,14 @@ def parse(filename):
             if p:
                 birthdate = p.get('birt-date')
                 deathdate = p.get('deat-date')
+                pmarrdate = p.get('marr-date')
+                
+
+                if marrdate!=None:
+                   ageatmarriage = marrdate - birthdate
+                   marrage = ageatmarriage.days / 365.25
+                   if marrage < 14:
+                      errors.append(Error('Error: US10: Marriage under 14', 0, [p.get('id')]))
 
                 if marrdate and deathdate:
                     if deathdate < marrdate:
@@ -327,8 +335,9 @@ def parse(filename):
                 else:
                     otherchildobject = get_by_id(people, otherchild)
                     otherchildbirth = otherchildobject.get('birt-date')
-                    if (math.fabs((childbirth-otherchildbirth).days < 240) and math.fabs((childbirth-otherchildbirth).days > 2)):
-                        errors.append(Error('Error US13: Child not a twin and born within 8 months of another child', 1, [child]))
+                    if childbirth!=None and otherchildbirth!=None:
+                        if (math.fabs((childbirth-otherchildbirth).days < 240) and math.fabs((childbirth-otherchildbirth).days > 2)):
+                            errors.append(Error('Error US13: Child not a twin and born within 8 months of another child', 1, [child]))
 
         daysbornon = []
         daysdone = 0
