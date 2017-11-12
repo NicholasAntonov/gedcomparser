@@ -287,6 +287,7 @@ def parse(filename):
         #Make sure that the children aren't born within 8 months of each other if they aren't twins
         #Also make sure siblings aren't married to each other
         marrdate = family.get('marr-date')
+        divdate = family.get('div-date')
         husband = get_by_id(people, family.get('husband'))
         wife = get_by_id(people, family.get('wife'))
 
@@ -302,6 +303,14 @@ def parse(filename):
                 if birthdate and marrdate:
                     if marrdate < birthdate:
                         errors.append(Error('Error US02: Marriage date before birth date', 0, [p.get('id')]))
+                        
+                if deathdate and divdate:
+                    if deathdate < divdate:
+                        errors.append(Error('Error US06: Divorce after death', 0, [p.get('id')]))
+                        
+                if marrdate and divdate:
+                    if divdate < marrdate:
+                        errors.append(Error('Error US04: Divorce before marriage', 0, [p.get('id')]))
 
         for child in childlist:
             childobject = get_by_id(people, child)

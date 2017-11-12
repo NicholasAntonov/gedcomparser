@@ -1,0 +1,41 @@
+0 HEAD
+1 SOUR Family Echo
+2 WWW http://www.familyecho.com/
+1 FILE Family 10
+1 DATE 12 NOV 2017
+1 DEST ANSTFILE
+1 GEDC
+2 VERS 5.5.1
+2 FORM LINEAGE-LINKED
+1 SUBM @I1@
+2 NAME Madeleine Daniell
+1 SUBN
+1 CHAR UTF-8
+0 @I1@ INDI
+1 NAME Ned /Declassified/
+2 GIVN Ned
+2 SURN Declassified
+2 _MARNM Declassified
+1 SEX M
+1 BIRT
+2 DATE 6 FEB 1980
+1 FAMS @F1@
+0 @I2@ INDI
+1 NAME US04 /Declasified/
+2 GIVN US04
+2 SURN Declasified
+2 _MARNM Declasified
+1 SEX F
+1 BIRT
+2 DATE 6 APR 1980
+1 FAMS @F1@
+0 @F1@ FAM
+1 HUSB @I1@
+1 WIFE @I2@
+1 MARR
+2 DATE 9 MAR 2005
+2 PLAC March
+1 DIV
+2 DATE 7 MAR 2004
+1 _CURRENT N
+0 TRLR
