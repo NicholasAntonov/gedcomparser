@@ -235,6 +235,11 @@ def parse(filename):
                     if orphanobject.get('age') < 18:
                         lists['orphans'].append(orphanobject)
 
+        if husband!=None and wife!=None:
+            wifedeath = wife.get('deat-date')
+            husbanddeath = husband.get('deat-date')
+            if wifedeath==None or husbanddeath==None
+
 
 
         for child in childlist:
