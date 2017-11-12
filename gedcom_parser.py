@@ -260,11 +260,14 @@ def parse(filename):
             if p:
                 birthdate = p.get('birt-date')
                 deathdate = p.get('deat-date')
-                age = p.get('age')
+                pmarrdate = p.get('marr-date')
+                
 
-                if age!=None:
-                    if age < 14:
-                        errors.append(Error('Error: US10: Marriage under 14', 0, [p.get('id')]))
+                if marrdate!=None:
+                   ageatmarriage = marrdate - birthdate
+                   marrage = ageatmarriage.days / 365.25
+                   if marrage < 14:
+                      errors.append(Error('Error: US10: Marriage under 14', 0, [p.get('id')]))
 
                 if marrdate and deathdate:
                     if deathdate < marrdate:
