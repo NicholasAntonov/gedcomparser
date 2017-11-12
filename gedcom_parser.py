@@ -235,10 +235,17 @@ def parse(filename):
                     if orphanobject.get('age') < 18:
                         lists['orphans'].append(orphanobject)
 
+    for family in families:
+        husbands = []
+        wifes = []
         if husband!=None and wife!=None:
             wifedeath = wife.get('deat-date')
             husbanddeath = husband.get('deat-date')
-            if wifedeath==None or husbanddeath==None
+            if wifedeath==None or husbanddeath==None:
+                husbands.append(husband)
+                wifes.append(wife)
+                if len(husbands) or len(wifes) >= 2:
+                    errors.append(Error('US11: No Bigamy', 0, [husband_id, wife_id]))
 
 
 
