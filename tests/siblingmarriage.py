@@ -9,7 +9,7 @@ class ErrorSiblingMarriage(unittest.TestCase):
 
     def test_fail_when_siblings_marry(self):
         people, families, errors, lists = parse('alabama.ged')
-        self.assertEqual(len(errors), 2)
+        self.assertEqual(len(errors), 6)
 
     def test_fail_finds_id(self):
         people, families, errors, lists = parse('alabama.ged')

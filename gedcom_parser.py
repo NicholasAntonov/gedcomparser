@@ -58,7 +58,7 @@ def parse(filename):
     families = []
     errors = []
     allnames = []
-
+    orphans = []
 
     now = datetime.datetime.now()
     with open(filename) as f:
@@ -195,6 +195,12 @@ def parse(filename):
     for family in families:
         husband_id = family.get('husband')
         wife_id = family.get('wife')
+        for otherfamily in families:
+            if otherfamily.get('id') == family.get('id'):
+                continue
+            else:
+                if otherfamily.get('husband') == husband_id and otherfamily.get('wife')==wife_id:
+                    errors.append(Error('Error US24: Not a unique family by spouses', 0, [family.get('id')]))                    
         husband = get_by_id(people, husband_id)
         wife = get_by_id(people, wife_id)
         hussurrname = ""
@@ -202,6 +208,34 @@ def parse(filename):
             namelist = husband.get('name').split()
             hussurrname = namelist[len(namelist)-1]
         childlist = family.get('children')
+
+        #Child has 2 parents that are dead
+        if husband != None and wife != None:
+            wifedeath = wife.get('deat-date')
+            husbanddeath = husband.get('deat-date')
+            if wifedeath != None and husbanddeath != None:
+                for potentialorphan in childlist:
+                    orphanobject = get_by_id(people, potentialorphan)
+                    if orphanobject.get('age') < 18:
+                        lists['orphans'].append(orphanobject)
+
+        #Child has one parent, who happens to be dead
+        if husband != None and wife == None:
+            husbanddeath = husband.get('deat-date')
+            if husbanddeath != None:
+                for potentialorphan in childlist:
+                    orphanobject = get_by_id(people, potentialorphan)
+                    if orphanobject.get('age') < 18:
+                        lists['orphans'].append(orphanobject)
+        if husband == None and wife != None:
+            wifedeath = wife.get('deat-date')
+            if wifedeath != None:
+                for potentialorphan in childlist:
+                    orphanobject = get_by_id(people, potentialorphan)
+                    if orphanobject.get('age') < 18:
+                        lists['orphans'].append(orphanobject)
+
+
 
         for child in childlist:
             childobject = get_by_id(people, child)
@@ -424,6 +458,10 @@ if __name__ == "__main__":
     for person in lists['recentlydead']:
         recentlydead.add_row([person.get('name'), person.get('deat-date')])
 
+    orphans = PrettyTable()
+    orphans.field_names = ["Orphan name", "Orphan ID"]
+    for orphan in lists['orphans']:
+        orphans.add_row([orphan.get('name'), orphan.get('id')])
 
     marriedlivingpeople = PrettyTable()
     marriedlivingpeople.field_names = ['Married People']
@@ -457,6 +495,9 @@ if __name__ == "__main__":
 
         outfile.write('\nRecently Dead People\n')
         outfile.write(str(recentlydead))
+
+        outfile.write('\nOrphans\n')
+        outfile.write(str(orphans))
 
         outfile.write('\nMarried Living People\n')
         outfile.write(str(marriedlivingpeople))
