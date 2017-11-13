@@ -9,7 +9,7 @@ class US15(unittest.TestCase):
 
     def test_fail_on_16_siblings(self):
         people, families, errors, lists = parse('manysiblings.ged')
-        self.assertEqual(len(errors), 3)
+        self.assertEqual(len(errors), 19)
 
     def test_fail_finds_id(self):
         people, families, errors, lists = parse('manysiblings.ged')

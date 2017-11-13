@@ -3,17 +3,9 @@ from gedcom_parser import parse
 
 class US16(unittest.TestCase):
 
-    def test_no_fail_on_lttle_siblings(self):
-        people, families, errors, lists = parse('simplegood.ged')
-        self.assertEqual(len(errors), 0)
-
-    def test_fail_on_16_siblings(self):
-        people, families, errors, lists = parse('manysiblings.ged')
-        self.assertEqual(len(errors), 3)
-
-    def test_fail_finds_id(self):
-        people, families, errors, lists = parse('manysiblings.ged')
-        self.assertEqual(errors[0].offenders[0], '@I5@')
+    def test_fail_on_different_last_names(self):
+        people, families, errors, lists = parse('gedcom/differentsonname.ged')
+        self.assertEqual(len(errors), 1)
 
 
 if __name__ == '__main__':

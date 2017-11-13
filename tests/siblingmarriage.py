@@ -2,10 +2,6 @@ import unittest
 from gedcom_parser import parse
 
 class ErrorSiblingMarriage(unittest.TestCase):
-    
-    def test_no_fails_when_correct(self):
-        people, families, errors, lists = parse('sample.ged')
-        self.assertEqual(len(errors), 2)
 
     def test_fail_when_siblings_marry(self):
         people, families, errors, lists = parse('alabama.ged')

@@ -1,0 +1,31 @@
+0 HEAD
+1 SOUR Family Echo
+2 WWW http://www.familyecho.com/
+1 FILE Family 5
+1 DATE 12 NOV 2017
+1 DEST ANSTFILE
+1 GEDC
+2 VERS 5.5.1
+2 FORM LINEAGE-LINKED
+1 SUBM @I1@
+2 NAME Nicholas Antonov
+1 SUBN
+1 CHAR UTF-8
+0 @I1@ INDI
+1 NAME Foo /Bar/
+2 GIVN Foo
+2 SURN Bar
+2 _MARNM Bar
+1 SEX M
+1 FAMS @F1@
+0 @I2@ INDI
+1 NAME Baz /Gulp/
+2 GIVN Baz
+2 SURN Gulp
+2 _MARNM Gulp
+1 SEX M
+1 FAMC @F1@
+0 @F1@ FAM
+1 HUSB @I1@
+1 CHIL @I2@
+0 TRLR
